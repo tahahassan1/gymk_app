@@ -1,0 +1,1 @@
+enum AppLayoutMode { mobile, tablet }

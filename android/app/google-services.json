@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "525961543594",
+    "project_id": "gymk-app",
+    "storage_bucket": "gymk-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525961543594:android:5a683237d42bbd5909f5d3",
+        "android_client_info": {
+          "package_name": "com.example.gymk_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "525961543594-95gg6ut73r9lfo391nqkgh2haguhcvhj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd7r3vwK4DoT6xLIlvcO60mUmKHiwuLo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "525961543594-95gg6ut73r9lfo391nqkgh2haguhcvhj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

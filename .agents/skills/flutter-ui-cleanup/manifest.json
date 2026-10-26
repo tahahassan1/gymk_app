@@ -1,0 +1,27 @@
+{
+  "name": "flutter-ui-cleanup",
+  "description": "Keep Flutter UI modular and performant by extracting bloated, deeply nested widgets into focused components. Promotes single-use sub-widgets to private classes in the same file, feature-shared widgets to lib/features/{feature}/presentation/ui/widgets/, and cross-feature widgets to lib/core/widgets/.",
+  "version": "1.1.0",
+  "author": "opencode",
+  "repository": "https://github.com/anomalyco/opencode",
+  "allowed-tools": ["Read", "Write", "Edit", "Glob", "Grep"],
+  "tags": ["flutter", "ui", "widgets", "refactoring", "code-quality", "organization"],
+  "ui": [
+    {
+      "type": "text",
+      "content": "## Flutter UI Widget Cleanup Skill\n\nAnalyzes and maintains clean, modular Flutter UI code by finding deeply nested or bloated widgets and guiding their extraction into well-structured components.\n\n### How It Works:\n\n1. **Analyzes** widget files under `lib/features/*/presentation/ui/` and `lib/core/widgets/`\n2. **Classifies** each widget as single-use (same file), feature-shared, or cross-feature\n3. **Suggests** extraction into focused sub-widgets with clear responsibilities\n4. **Recommends** placement: private class in the same file, `presentation/ui/widgets/`, or `core/widgets/`\n5. **Provides** before/after implementation examples\n\n### Guidelines:\n\n- Nesting beyond 4-5 levels is the primary signal to extract\n- Roughly 150 lines is a soft signal, not a hard limit - never split a widget just to hit a number\n- Atomic widgets (custom text fields, buttons, dropdowns) are exempt when their size comes from configuration\n- Extracted widgets stay \"dumb\": data in via constructor, interactions out via callbacks\n- Follows the established architecture: ui -> logic -> data, with `AppStyles` / `AppColors` for theming",
+      "header": "Flutter UI Cleanup Wizard",
+      "placement": "body"
+    }
+  ],
+  "search-actions": [
+    {
+      "query": "Widget build\\(BuildContext context\\)",
+      "type": "text",
+      "regex": true,
+      "path": "lib",
+      "filter": "*.dart"
+    }
+  ],
+  "context-producer": "Looks at widget files under lib/features/*/presentation/ui/ (screens, layouts, widgets) and lib/core/widgets/ to understand the current structure, identifies deeply nested or bloated build() methods, and suggests extraction based on where each widget is used across the codebase."
+}
