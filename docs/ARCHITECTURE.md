@@ -16,10 +16,16 @@ Use two explicit UI layout variants, mobile and tablet, within the Presentation 
 
 - Confirmed product rules override convenience in the architecture: permanent deletion, no archive/void workflow, owner-only tenancy, one-month memberships, and early renewal preserving remaining time.
 - Design defaults are defined in `DESIGN_STYLE.md`. The confirmed two-layout, framework-only adaptive requirement in this document overrides any earlier phone-only layout guidance in that design document.
-- The PRD still leaves currency, expiry-threshold configurability, and a sync indicator open. Recommended implementation defaults: EGP, three days with no settings control, and compact pending/error feedback. Mark these as defaults, not previously approved decisions.
+- The PRD confirms whole EGP (scale 1), zero defaults, and positive payment records.
+  Expiry-threshold configurability and a sync indicator remain open. Three days
+  is the current rule with no settings control; compact pending/error feedback
+  remains a presentation recommendation, not an approved indicator decision.
 - The PRD's date-only wording conflicts with its description of `paidAt` as a moment. Section 6 proposes a precise encoding without adding a payment-date feature.
 - Firestore cannot make data available offline before it has been fetched. Section 8 qualifies the PRD's broad offline promise; do not silently promise a capability the SDK cannot supply.
-- Arbitrary manually entered future starts, gap-producing edits/deletions, and cascades larger than one write batch need the explicit treatment in sections 7 and 10. Do not invent a future-subscription product feature or a backend to hide these cases.
+- Manual future starts are prohibited; automatic early renewal is exempt.
+  Gap/future-only history is expired when today is uncovered, with renewal from
+  today and remaining dates preserved (section 7). Cascades larger than one
+  write batch remain unresolved (section 10).
 
 ## 2. Responsibilities and dependency direction
 
@@ -240,12 +246,25 @@ Use the document ID as the typed model ID. Do not maintain a second conflicting 
 - `paidAt`: the recording/payment calendar date in the same date-only encoding, assigned on form submission. This reconciles the PRD's date-only rule with its requirement that payment belongs to the recording month. If an exact payment instant is required later, explicitly revise this schema and the PRD together.
 - `createdAt`: client recording timestamp, usable immediately offline; treat it as metadata rather than an authoritative membership/payment date.
 - Optional `updatedAt` may be a timestamp when implementing edits. It is not an audit log.
-- `amount` and default prices: integer minor units. For the provisional EGP choice, 12,500 means EGP 125.00. Convert only at input/output boundaries; do not sum binary floating-point money.
-- The app-facing DateOnly value is separate from timestamps and knows how to compare, serialize, and add a calendar month with end-of-month clamping.
+- `amount` and default prices: integer whole EGP, scale 1 (the app's smallest
+  accepted monetary unit). An integer 125 means EGP 125, not 1.25. The user
+  confirmed this choice on 27 October 2026. No piastre conversion or floating-point
+  sums. `GymkCurrency` centralizes the code and scale.
+- The app-facing DateOnly value is separate from timestamps and knows how to
+  compare and add a calendar month with end-of-month clamping. Persisted date
+  codecs remain gated by the unresolved concrete encoding decision.
 
 Use the device's local calendar date for this single-location MVP, behind an injectable Clock. A fixed gym timezone is a future decision if devices across timezones become supported. Never convert a date-only value to UTC midnight and back just to store or compare it.
 
-Validate required trimmed names, valid dates, finite numeric input before conversion, and consistent nonnegative amounts. Whether zero-price entries are allowed is an explicit product validation decision; do not invent a hardcoded pricing minimum. Phone numbers are strings, not integers, and need not be unique. IDs and member references are immutable during edits.
+Validate required trimmed names, valid dates and whole-EGP amounts. Defaults may
+be zero; payment records must be positive. The pure amount policy parses digits
+as integers without double conversion, accepting Western/Arabic-Indic/Persian
+digits and `.`/Arabic decimal separators. A zero-only decimal suffix represents
+an exact whole amount; nonzero fractional digits are rejected, never rounded.
+Grouping separators and scientific notation are rejected. Values outside Android's
+signed 64-bit integer range are rejected. Formatting belongs in Presentation.
+Phone numbers are strings, not integers, and need not be unique. IDs and member
+references are immutable during edits.
 
 ## 7. Pure membership and reporting policies
 
@@ -264,7 +283,7 @@ Normal early renewal creates the next adjacent period starting at the current ov
 | No subscription records | No subscription |
 | Current coverage with >3 days until its end | Active |
 | Current coverage with 1–3 days until its end | Expiring soon |
-| Today is the overall coverage end date or later, with no current coverage | Expired |
+| Records exist but no coverage contains today, including gaps/future-only history | Expired |
 
 An early renewal must keep the member active now and extend the displayed overall expiry. Do not derive current status solely from the most recently created document's future `startDate`.
 
@@ -283,7 +302,21 @@ Example: joins 26 October, expires 26 November, renews 10 November → displayed
 
 An edited subscription recomputes its own end from its start. A deleted subscription stops contributing to coverage and income. Do not silently change dates on other historical subscriptions; an early-renewal payment can already have a recorded period of its own.
 
-Deleting or changing a middle period can leave a gap or future-only records. That behavior is not fully defined by the PRD. Recommended minimal policy: preserve remaining dates, derive active status only from coverage containing today, and show explicit remaining date ranges in history. Do not show active merely because some remaining record ends in the future. Before shipping, settle the label/renewal behavior for future-only records or constrain arbitrary future manual starts; do not guess this is identical to ordinary early renewal.
+Deleting or changing a middle period can leave a gap or future-only records.
+Confirmed on 27 October 2026: preserve remaining dates; if no coverage contains
+today, classify the membership as expired and default renewal to today. No
+upcoming status. No records still means no subscription. The policy exposes
+current expiry separately from latest past expiry and remaining date ranges;
+future-only history has neither a current nor a past expiry.
+
+Manual start selection must be today or earlier. Automatic early renewal can
+start at the future continuous expiry. Do not globally reject future dates in
+stored models or Security Rules: that would reject valid early renewals. An
+amount-only correction must preserve an existing automatic future period without
+treating its unchanged start as a newly selected manual date. Form integration
+and record mutation remain Phase 5 work. A proposed period can connect remaining
+coverage across a gap; preview its merged current expiry without shifting any
+existing period's dates.
 
 ### Reporting
 

@@ -67,6 +67,10 @@ users/{uid}/dropins/{id}
 - Dates are stored as dates only (no time) to avoid timezone issues.
 - A member's status is derived from their remaining subscription records; it is not stored. Early renewal extends their current membership expiry without interrupting their active status.
 - A drop-in is not linked to a member.
+- Money is stored as integer whole Egyptian pounds (EGP): the app's smallest
+  monetary unit is one pound, scale 1, with no fractional-pound payments. Zero
+  default prices are allowed; subscription and drop-in payment records must be
+  strictly positive. Negative and invalid amounts are always rejected.
 
 ## 8. Business Rules
 
@@ -79,7 +83,10 @@ users/{uid}/dropins/{id}
 - Each member has an individual subscription cycle based on when they join. Subscriptions are not aligned to the first day of the calendar month.
 - If the member has an active subscription: the renewal's `startDate` = the current membership `endDate`, and its `endDate` = that date + one calendar month, using rule 8.1. All remaining days are preserved.
 - If the member's subscription is expired or none exists: `startDate` = today and `endDate` = `startDate` + one calendar month.
-- The owner can edit `startDate` manually; `endDate` is recalculated using rule 8.1.
+- The owner can edit `startDate` manually to today or an earlier date; `endDate`
+  is recalculated using rule 8.1. Manual future start selection is prohibited.
+  This restriction does not apply to automatic early renewal, which starts at
+  the current continuous expiry even when that date is in the future.
 - Early renewal is presented as an extension of the existing membership. No separate "upcoming subscription" status is needed for this renewal flow. The member remains active and the UI shows the extended expiry date.
 - Example: a member joins on 26 October and initially expires on 26 November. If they renew on 10 November, their new expiry is 26 December. The renewal payment belongs to November's income.
 - A month means a calendar month, not a fixed 30-day duration.
@@ -92,6 +99,14 @@ users/{uid}/dropins/{id}
 | Expiring soon | 3 days or fewer remain |
 | Expired | `endDate` reached or passed |
 | No subscription | No subscription recorded |
+
+Adjacent or overlapping periods form continuous coverage. Only coverage
+containing today is current; a disconnected future period does not extend the
+current expiry. If edits/deletions leave records but no coverage for today,
+including future-only history, classify the membership as expired and default
+renewal to today. Preserve all remaining historical dates. Do not introduce an
+upcoming status. Current expiry is absent when no period covers today; a past
+expiry and remaining future date ranges are separate history facts.
 
 ### 8.4 Statistics
 
@@ -203,11 +218,15 @@ There are no roles. A user reads and writes only their own data. The owner may c
 - Deleting a member also deletes their subscriptions and changes the relevant historical statistics.
 - Subscription cycles follow each member's own start date. Early renewal preserves remaining days and extends the current expiry by one calendar month.
 - Monthly statistics group payments by payment month; they do not align subscriptions to month boundaries.
+- Confirmed on 27 October 2026: whole EGP (scale 1); zero defaults allowed,
+  positive payment records required; manual future starts prohibited while
+  automatic early renewal remains allowed. Uncovered gaps/future-only history
+  are expired, renewal defaults to today, and remaining dates are preserved.
 - `last-write-wins` is accepted for the same account on two devices.
 
 ## 15. Open Questions
 
 1. **Near-expiry threshold:** fixed at 3 days for the MVP, configurable later?
 2. **Fixing mistakes — resolved:** members, subscriptions, and drop-ins support editing and ordinary permanent deletion, as specified in rule 8.5.
-3. **Currency:** not yet specified.
+3. **Currency — resolved:** whole EGP, scale 1, under the validation above.
 4. **Sync indicator:** should the UI show that some changes haven't uploaded yet?

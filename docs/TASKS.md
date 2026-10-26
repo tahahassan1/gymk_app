@@ -2,7 +2,7 @@
 
 Planning baseline: 27 October 2026. Platform: Android. UI: Egyptian Arabic, RTL.
 
-This checklist tracks verified implementation. The current request authorizes plan corrections and Phase 1 implementation, including its commit/push checkpoint. Phases 2–8 remain planned and unauthorized for implementation.
+This checklist tracks verified implementation. Phase 1 is delivered. The current request authorizes Phase 2 only, including its verified commit/push checkpoint; Phases 3–8 remain unauthorized for implementation.
 
 ## Sources and working rules
 
@@ -11,10 +11,10 @@ This checklist tracks verified implementation. The current request authorizes pl
 - Use Presentation → Business Logic → Data (Repository → Data Provider), with Cubit exclusively. Cubits consume typed repositories and pure policies. No Bloc subclasses/events, mandatory use cases, ViewModels, second durable database, or responsive packages.
 - Keep Cubits in `business_logic/cubit/`, policies in `business_logic/policies/`, and feature views/layouts/widgets under `presentation/`. Add files when needed, not empty scaffolding for every future feature.
 - Read the applicable project skills before implementation and run their compatible checks. The inspected `.agents/skills/flutter-cubit/SKILL.md` conflicts with AGENTS.md: its mandatory use cases, `presentation/cubit/` location, and loading/error union template do not apply. Use immutable independent state fields that preserve cached data, nullable-field clearing, and sealed types only for exclusive alternatives. Its `core/di/` example yields to `lib/app/di.dart`.
-- `.agents/skills/flutter-ui-cleanup/SKILL.md` provides useful extraction/controller/rebuild guidance, but its alternate folder mappings yield to the paths above. `AppStyles`, `AppColors`, `AppRoutes`, and `DBKeys` mentioned by the skill do not exist yet; do not pretend they are existing contracts. `.agents/skills/flutter-code-review/SKILL.md` is the final read-only self-review checklist.
-- Preserve unrelated changes. The inspected repository has its project files untracked; do not reset, clean, regenerate the project, or infer implementation history from that state.
+- `.agents/skills/flutter-ui-cleanup/SKILL.md` provides useful extraction/controller/rebuild guidance, but its alternate folder mappings yield to the paths above. Phase 1 supplies `AppColors` and `AppRoutes`; do not invent the skill's other example contracts (`AppStyles`, `DBKeys`). `.agents/skills/flutter-code-review/SKILL.md` is the final read-only self-review checklist.
+- Preserve unrelated changes. The pre-Phase-1 baseline below is historical. At Phase 2 start, local HEAD and remote `main` both matched `4f12849eb4fdc24959434ee8c9280cbde1aeb604`, with a clean worktree. Do not reset, clean, or regenerate the project.
 - Keep IDs stable. Check a task only after its acceptance criteria and verification pass; record commands, outcomes, and any blocked runtime checks beneath that task. Partial work stays unchecked. Add dependency changes explicitly.
-- Phase numbers organize delivery; listed task dependencies determine readiness, without blanket barriers requiring every earlier CRUD flow. In particular, initial GYM-603 report work may start when its read contracts are ready; GYM-604 verifies later CRUD integration. This does not expand the current Phase 1-only authorization.
+- Phase numbers organize delivery; listed task dependencies determine readiness, without blanket barriers requiring every earlier CRUD flow. In particular, initial GYM-603 report work may start when its read contracts are ready; GYM-604 verifies later CRUD integration. This does not expand the current Phase 2-only authorization.
 
 ## Planning baseline (before Phase 1)
 
@@ -42,15 +42,17 @@ Baseline verification performed during planning:
 
 ## Decisions and prerequisites to resolve
 
-Proposals below remain proposals. Resolve business choices in PRD and any corresponding architecture/design contract before marking dependent tasks complete. Independent work can proceed.
+Unresolved proposals below remain proposals. Resolved decisions are recorded in
+PRD and the corresponding architecture/design contract before dependent tasks
+are marked complete. Independent work can proceed.
 
 | ID | Unresolved item and existing guidance | Gate / next action |
 | --- | --- | --- |
-| D01 | Currency and its minor-unit scale are unspecified. EGP is recommended, not approved. Integer storage is already confirmed. | Resolve before currency-specific conversion, labels, default prices, and financial UI: GYM-203, GYM-402, GYM-503, GYM-601, GYM-603, GYM-701. Integer data models and generic integer calculations do not depend on currency selection or input parsing. |
+| D01 | Resolved by user, 27 October 2026: whole EGP, zero decimal places, scale 1. The stored integer unit is one pound, not a piastre. | Applied in GYM-203 and documented in PRD/ARCHITECTURE/DESIGN_STYLE. Actual initial prices remain D08; no currency picker is authorized. |
 | D02 | PRD says dates have no time, but calls `paidAt` the moment of recording. ARCHITECTURE proposes `YYYY-MM-DD` strings for coverage/session dates and recording date for `paidAt`, with timestamp metadata for `createdAt`. | Confirm concrete persisted encodings before codecs/rules/reporting integration: GYM-301, GYM-305, GYM-503, GYM-603. No payment-date editor is authorized. Pure calendar arithmetic can proceed. |
-| D03 | Manual future starts and edits/deletes leaving gaps or future-only coverage lack complete label and renewal behavior. Preserve other historical dates; only coverage containing today can be active. | Resolve remaining status/expiry presentation and renewal handling before GYM-202, GYM-501, GYM-502, GYM-503, GYM-504 are complete. Ordinary adjacent early renewal is already defined and can be implemented independently. |
+| D03 | Resolved by user, 27 October 2026: prohibit manual future starts, exempt automatic early renewal. If records remain but today is uncovered, including future-only history, classify as expired and renew from today. Preserve remaining dates; no upcoming status. | Applied in GYM-202. Current expiry requires coverage containing today; past expiry and future history ranges remain separate facts. Later forms must distinguish a newly selected manual start from an unchanged automatic future start during amount correction. |
 | D04 | PRD leaves a sync indicator open; design recommends compact pending/error feedback. Correct local/pending/acknowledged/rejected semantics and eventual error handling are mandatory. | Decide placement and scope of an optional persistent indicator before GYM-403 is complete. GYM-304 must implement accurate mutation tracking regardless; never infer global sync or connectivity from one snapshot. |
-| D05 | Are zero-price records/defaults allowed? Negative/invalid amounts must be rejected, but no positive minimum is approved. | Resolve input and Security Rules validation before GYM-203, GYM-305, and monetary forms are complete. Do not silently impose a minimum. |
+| D05 | Resolved by user, 27 October 2026: allow zero default prices; subscription/drop-in payment records must be positive. Negative/invalid amounts are rejected. | Applied in GYM-203 with explicit amount purpose. GYM-305 rules and later forms must use the same distinction. |
 | D06 | Three days is the current near-expiry rule. PRD asks whether it stays fixed for MVP and becomes configurable later. | Centralize three days now; no configuration control is authorized. Clarify the roadmap before release, without blocking current status-policy work. |
 | D07 | Incomplete history prevents safe member cascade; history exceeding one atomic batch requires an explicit supported boundary. Architecture recommends a guarded, complete-data, single-batch flow. Larger-history recovery/product handling is unresolved. | GYM-505 must verify actual SDK/backend limits, block unsafe cascades with clear copy, and document the supported boundary. If larger cascades must be supported, design/authorize that separately; do not add a backend or silently split batches. Settle production handling in GYM-803. |
 | D08 | First-login default gym name and exact initial subscription/drop-in prices are not supplied. Default record creation is required, but values are not defined. | Resolve before GYM-402 can create settings and before GYM-701 is complete. Do not invent initial prices or reset existing settings. |
@@ -77,7 +79,7 @@ Each phase has an explicit delivery task (GYM-190 through GYM-890). After its im
 
 ## Phase 1 — Arabic, adaptive application foundation
 
-Authorized implementation phase. Start with GYM-101. Currency, payment encoding, and future-only coverage decisions do not block this phase; missing font acquisition gates GYM-102 only.
+Delivered implementation phase. Currency, payment encoding, and future-only coverage decisions did not block this phase; missing font acquisition gated GYM-102 only.
 
 ### GYM-101 — Establish the app composition and required foundation dependencies
 
@@ -135,29 +137,36 @@ Authorized implementation phase. Start with GYM-101. Currency, payment encoding,
 
 ## Phase 2 — Pure calendar, coverage, and money rules
 
+Authorized scope starts at GYM-201. D01, D03 and D05 were resolved explicitly by
+the user before dependent behavior was implemented. Persisted date encoding D02
+belongs to Phase 3 and remains unresolved; no codec or Firebase work is included.
+
 ### GYM-201 — Add injectable time and calendar-month arithmetic
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-101.
 - **Scope/components:** `lib/core/time/`, pure policy tests.
 - **Acceptance:** validated date-only value, injectable local-date Clock, ordering/day differences independent of DST elapsed hours, exclusive expiry, and clamped calendar-month addition. No Flutter/Firebase imports in pure rules; persisted encoding remains gated by D02.
 - **Verification:** invalid dates, leap/non-leap 31 January, repeated clamping through March, December/year rollover, exclusive end, and calendar-day differences around DST transitions.
+- **Evidence:** `DateOnly`, injectable `Clock`/local `SystemClock`, six date tests and half-open coverage tests pass. Explicit offset samples demonstrate 23/25-hour elapsed days still count as one calendar day. Formatting/analysis and all 55 tests pass; see [Phase 2 verification](verification/PHASE_2.md). No persisted codec added.
 
 ### GYM-202 — Implement coverage/status and renewal previews
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-201; D03 for unresolved cases.
 - **Scope/components:** subscriptions/members `business_logic/policies/`, focused pure tests.
 - **Acceptance:** merge adjacent/overlapping coverage, derive current status and overall continuous expiry, central three-day boundary, no-subscription handling, default expired/first start to today. Early renewal extends existing coverage; edits/deletes preserve other records' dates. Complete future-only/gapped label and renewal semantics only after D03 is resolved. No stored status/authoritative member expiry.
 - **Verification:** 26 October→26 November, renewal on 10 November→26 December; repeated early renewals; 4/3/1/0 remaining days; overlap, middle/latest deletion and gap/future-only cases under the resolved decision.
+- **Evidence:** three coverage tests and 17 subscription-policy cases pass: October/November/December extension, repeated/leap clamping, 4/3/1/0-day statuses, history edits/deletes, gaps/future-only expiry, manual-future rejection with automatic-renewal exemption, and injected-date rollover. Policies preserve input dates and use one clock read per assessment/preview. Later Cubit scheduling/forms are not implemented.
 
 ### GYM-203 — Implement precise amount parsing and validation
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-101; D01, D05.
 - **Scope/components:** shared money/input value helpers, presentation formatting boundary, pure tests.
 - **Acceptance:** store/sum integer minor units; parse Western and Arabic-Indic digits and supported decimal separators without binary floating-point totals; reject invalid/nonfinite/negative values and enforce the resolved zero policy. Currency/scale is centralized; no widget-level price policy.
 - **Verification:** exact decimal conversion, fractional precision, localized digits, malformed/empty input, zero policy, and integer totals that expose floating-point rounding errors.
+- **Evidence:** eight money/formatting tests pass for whole EGP (scale 1), localized digits, exact zero-only decimal suffixes, rejected nonzero fractions, invalid/nonfinite/negative input, zero defaults versus positive records, signed-64-bit overflow and exact large-integer totals/output. Presentation formats Arabic currency with Western digits and bidi isolation. No defaults, payment records or report calculator created.
 
 ### GYM-290 — Verify, commit and push Phase 2
 
@@ -166,6 +175,8 @@ Authorized implementation phase. Start with GYM-101. Currency, payment encoding,
 - **Scope/components:** Phase 2 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after focused policy/amount tests; no unrelated UI matrix.
 - **Verification:** successful checks, reviewed commit, successful push and matching local/remote branch SHA.
+
+- **Checkpoint status:** implementation checks pass; commit/push/SHA receipt is pending and this task stays unchecked until remote verification succeeds.
 
 ## Phase 3 — Typed data, offline contracts, and security
 
@@ -405,7 +416,7 @@ Authorized implementation phase. Start with GYM-101. Currency, payment encoding,
 
 ## Current handoff
 
-- **Implemented:** Phase 1 foundation only; gym feature destinations remain explicit scaffolding. D01–D08 and D10 remain unresolved or unverified as documented; D09 asset acquisition is satisfied.
-- **Verification:** formatting, analysis, 21 focused widget tests, Android debug build/install, AAPT branding checks and emulator visual/resize/keyboard checks. Details and the environment workaround are in [verification/PHASE_1.md](verification/PHASE_1.md).
-- **Delivery:** GYM-190 passed: implementation `89c154d` is committed, pushed and remotely verified; this receipt follows the same push/SHA check. No Phase 1 blockers remain. The Windows build workaround is documented rather than changing global/project Gradle settings.
-- **Next scope:** Phase 2 is the next planned implementation phase. No Phase 2–8 implementation is authorized by this request.
+- **Implemented:** Phases 1 and 2 only; gym feature destinations remain scaffolding. D01/D03/D05 are resolved as above, D09 is satisfied; D02/D04/D06/D07/D08/D10 remain open or unverified for later phases.
+- **Verification:** Phase 2 formatting, analysis, 34 focused policy/amount tests and the existing 21 widget tests pass. See [verification/PHASE_2.md](verification/PHASE_2.md). Prior Android foundation evidence and build workaround remain in [verification/PHASE_1.md](verification/PHASE_1.md); no new device/Firebase verification is claimed for pure policies.
+- **Delivery:** GYM-190 remains delivered (`89c154d`, receipt `4f12849`). GYM-290 commit/push and remote verification are pending; no Phase 2 implementation blocker remains.
+- **Next scope:** stop after Phase 2's delivery checkpoint. Phase 3 is planned but unauthorized; its persisted-date encoding prerequisite D02 remains unresolved.

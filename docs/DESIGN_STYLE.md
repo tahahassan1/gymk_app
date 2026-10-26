@@ -10,7 +10,11 @@ The PRD owns product scope and business rules. This document owns presentation. 
 
 Confirmed product decisions: ordinary editing and permanent deletion, no archiving, no soft deletion or cancellation workflow, individual membership cycles, and early renewal extending the existing expiry by one calendar month. Monthly reporting groups money by payment month.
 
-The PRD still leaves currency, configurable expiry thresholds, and a sync indicator open. Examples below use EGP and a compact sync status as recommended defaults. Isolate these decisions so they can be changed without redesigning screens. The current expiry threshold is three days; do not build a configuration control yet.
+The PRD confirms whole EGP amounts (no fractional units), zero default prices and
+positive payment records. Currency display uses zero decimal places and the
+selected Western digit convention. Configurable expiry thresholds and a sync
+indicator remain open; compact sync feedback is still a recommendation. The
+current expiry threshold is three days; do not build a configuration control yet.
 
 ## 2. Design direction
 
@@ -117,7 +121,8 @@ Do not use large blurry elevations, glassmorphism, metallic textures, gradients,
 - Neutral surface and 1.5px boundary; focused input gets a clear ink boundary plus a restrained yellow cue.
 - Inline validation under the relevant field. Never use color alone to identify an error.
 - Search label: `ابحث باسم العضو`. Keep the query and selected filter when returning from details.
-- Money input has a decimal keyboard and visible currency suffix once currency is selected.
+- Money input uses a numeric keyboard for whole EGP and a visible currency suffix.
+  Accept localized digits; reject nonzero fractions instead of rounding them.
 - Phone input is LTR, optional, and uses a phone keyboard.
 - Date controls show a readable date and open the date picker; do not require owners to type ISO dates.
 
@@ -179,6 +184,10 @@ An early renewal updates the displayed overall expiry. Do not label the member a
 - Member name, editable amount prefilled from settings, editable start date, computed end date.
 - For early renewal show both: `الانتهاء الحالي` and `بعد التجديد`.
 - Explicitly state the new expiry before confirmation. Label: `تأكيد التجديد` or `حفظ الاشتراك` depending on the task.
+- A manually selected start cannot be after today. Automatic early renewal may
+  start at the current future expiry. Gaps/future-only history without coverage
+  today use `منتهي`, with renewal defaulting to today and remaining history dates
+  preserved. Do not add an upcoming status or label a future end as current expiry.
 - Payment is recorded now according to the current PRD. Do not add debt, installments, discounts, or a separate payment-date editor without a product decision.
 - The subscription is one calendar month. Do not display “30 days” or align it to month boundaries.
 
