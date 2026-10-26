@@ -126,11 +126,12 @@ Authorized implementation phase. Start with GYM-101. Currency, payment encoding,
 
 ### GYM-190 — Verify, commit and push Phase 1
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-101, GYM-102, GYM-103, GYM-104, GYM-105.
 - **Scope/components:** Phase 1 files, verification evidence and this checklist.
 - **Acceptance:** follow the phase commit-and-push protocol; keep unresolved product decisions open; no Phase 2+ implementation.
 - **Verification:** reviewed staged diff, successful phase commit/push, matching local/remote branch SHA, and recorded remaining worktree state.
+- **Evidence:** implementation commit `89c154d7c6469beeb015e2f3cbb208451d207b71` pushed to `origin/main` in the private [gymk_app repository](https://github.com/tahahassan1/gymk_app). `git ls-remote --heads origin main` matched local HEAD; the worktree was clean. This documentation receipt is committed/pushed and checked by the same protocol. No Phase 2+ implementation was started.
 
 ## Phase 2 — Pure calendar, coverage, and money rules
 
@@ -406,5 +407,5 @@ Authorized implementation phase. Start with GYM-101. Currency, payment encoding,
 
 - **Implemented:** Phase 1 foundation only; gym feature destinations remain explicit scaffolding. D01–D08 and D10 remain unresolved or unverified as documented; D09 asset acquisition is satisfied.
 - **Verification:** formatting, analysis, 21 focused widget tests, Android debug build/install, AAPT branding checks and emulator visual/resize/keyboard checks. Details and the environment workaround are in [verification/PHASE_1.md](verification/PHASE_1.md).
-- **Delivery:** GYM-190 remains unchecked until the implementation commit is pushed and the remote SHA is verified.
+- **Delivery:** GYM-190 passed: implementation `89c154d` is committed, pushed and remotely verified; this receipt follows the same push/SHA check. No Phase 1 blockers remain. The Windows build workaround is documented rather than changing global/project Gradle settings.
 - **Next scope:** Phase 2 is the next planned implementation phase. No Phase 2–8 implementation is authorized by this request.
