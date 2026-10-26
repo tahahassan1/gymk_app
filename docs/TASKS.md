@@ -170,13 +170,13 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-290 — Verify, commit and push Phase 2
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-201, GYM-202, GYM-203.
 - **Scope/components:** Phase 2 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after focused policy/amount tests; no unrelated UI matrix.
 - **Verification:** successful checks, reviewed commit, successful push and matching local/remote branch SHA.
 
-- **Checkpoint status:** implementation checks pass; commit/push/SHA receipt is pending and this task stays unchecked until remote verification succeeds.
+- **Evidence:** reviewed implementation commit `eaddbcea6ecfe159df82187b6a8e8db6e2bf956c` pushed normally to `origin/main`. `git ls-remote origin refs/heads/main` matched local HEAD; `git status --short --branch` showed a clean worktree with no ahead/behind count. Formatting, analysis, 34 focused tests and all 55 suite tests passed. This documentation receipt records that verified checkpoint and follows the same push/SHA verification protocol.
 
 ## Phase 3 — Typed data, offline contracts, and security
 
@@ -418,5 +418,5 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 - **Implemented:** Phases 1 and 2 only; gym feature destinations remain scaffolding. D01/D03/D05 are resolved as above, D09 is satisfied; D02/D04/D06/D07/D08/D10 remain open or unverified for later phases.
 - **Verification:** Phase 2 formatting, analysis, 34 focused policy/amount tests and the existing 21 widget tests pass. See [verification/PHASE_2.md](verification/PHASE_2.md). Prior Android foundation evidence and build workaround remain in [verification/PHASE_1.md](verification/PHASE_1.md); no new device/Firebase verification is claimed for pure policies.
-- **Delivery:** GYM-190 remains delivered (`89c154d`, receipt `4f12849`). GYM-290 commit/push and remote verification are pending; no Phase 2 implementation blocker remains.
+- **Delivery:** GYM-190 remains delivered (`89c154d`, receipt `4f12849`). GYM-290 passed: implementation `eaddbce` is committed, pushed and remotely verified, with a clean worktree before this documentation receipt. No Phase 2 blockers remain; this receipt follows the same push/SHA check.
 - **Next scope:** stop after Phase 2's delivery checkpoint. Phase 3 is planned but unauthorized; its persisted-date encoding prerequisite D02 remains unresolved.
