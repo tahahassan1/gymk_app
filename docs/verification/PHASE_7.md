@@ -68,3 +68,8 @@ is clean, the full 159-test suite passes, and git diff --check passes. Read-only
 review confirms repository/provider boundaries, stable mutation IDs, explicit
 stream cleanup, independent failures and no credential/configuration changes.
 Staged review and normal push/remote-SHA audit follow this record.
+
+Implementation `cf11d03cbedfd3b3c2500052df210b2b49689ed2` was committed and pushed
+normally to origin/main. Remote SHA matched local HEAD exactly, with a clean
+remaining worktree. GYM-790 is complete. This receipt is pushed and verified by
+the same protocol before Phase 8 work; deployment/publication remain unauthorized.
