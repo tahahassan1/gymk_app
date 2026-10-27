@@ -324,7 +324,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-590 — Verify, commit and push Phase 5
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** implementation `806e534b0e351fe582b610676ff5691dba0ee29f` pushed normally; remote SHA matched local HEAD and worktree was clean. See [Phase 5 verification](verification/PHASE_5.md).
 - **Depends on:** GYM-501, GYM-502, GYM-503, GYM-504, GYM-505.
 - **Scope/components:** Phase 5 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after member/subscription/cascade checks.
@@ -434,11 +435,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ## Current handoff
 
-- **Implemented:** Phases 1–3 delivered; Phase 4 authentication/session implementation is ready. Gym feature destinations remain scaffolding. D01–D09 are resolved/satisfied; D10 package, Firebase registration and private local signing coordination are complete.
-- **Verification:** Phase 4 has 113 passing Flutter tests, clean analysis/formatting and a passing native Android auth/session scenario. See [verification/PHASE_4.md](verification/PHASE_4.md). Phase 3 rules/native evidence remains in [verification/PHASE_3.md](verification/PHASE_3.md). Actual Google OAuth is assigned to the user and remains unverified; no full-app or release-artifact success is claimed.
-- **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`), GYM-290 (`eaddbce`, receipt `8ce31d1`) and GYM-390 (`cf543f8`, receipt `cbb77e8`) are pushed and remotely verified. Phase 4 implementation `d59e592` is also pushed and remotely verified; its full verification gate remains open as recorded above.
-- **Active scope:** complete ALL remaining tasks through Phase 8, superseding the
-  earlier Phase 4 stop. GYM-401/GYM-490 await the actual Google OAuth result;
-  independent later work continues.
-- **In progress:** Phase 5 implementation has 128 passing tests and two passing
-  native Android scenarios. See [Phase 5 evidence](verification/PHASE_5.md).
+- **Implemented:** Phases 1-3 and 5 are verified and delivered. Phase 4 implementation is delivered; actual Google OAuth verification remains open. Drop-ins, reports and settings remain the next authorized work.
+- **Verification:** Phase 5 has 128 passing Flutter tests, clean format/analysis and two passing Android native scenarios. See [Phase 5 evidence](verification/PHASE_5.md). No full-app or release readiness is claimed.
+- **Delivery:** Prior receipts remain above. Phase 5 implementation `806e534b0e351fe582b610676ff5691dba0ee29f` was pushed, remote SHA matched and the worktree was clean. This documentation receipt follows the same protocol.
+- **Active scope:** complete ALL remaining tasks through Phase 8. Continue automatically into Phase 6. GYM-401/GYM-490 await the user's actual Google OAuth result; independent work continues. No production deployment or publication is authorized.
