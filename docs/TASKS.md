@@ -229,12 +229,12 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-390 — Verify, commit and push Phase 3
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-301, GYM-302, GYM-303, GYM-304, GYM-305.
 - **Scope/components:** Phase 3 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after data/state/rules and required SDK checks.
 - **Verification:** successful checks, reviewed commit, successful push and matching local/remote branch SHA.
-- **Checkpoint status:** implementation/SDK/rules checks passed; commit/push receipt remains pending until remote SHA verification.
+- **Evidence:** implementation `cf543f859e9deebc92e39581f3109412f8949d31` pushed normally to `origin/main`; remote SHA matched local HEAD and worktree was clean. This documentation receipt follows the same push/SHA protocol.
 
 ## Phase 4 — Google authentication and tenant lifecycle
 
@@ -424,9 +424,9 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ## Current handoff
 
-- **Implemented:** Phases 1–2 delivered; Phase 3 data/offline/state/rules implementation verified, awaiting its Git checkpoint. Gym feature destinations remain scaffolding until their UI phases. D01–D09 are resolved/satisfied; D10 identity is confirmed and signing/Firebase coordination is in progress for Phase 4.
+- **Implemented:** Phases 1–3 delivered. Gym feature destinations remain scaffolding until their UI phases. D01–D09 are resolved/satisfied; D10 identity is confirmed and signing/Firebase coordination is in progress for Phase 4.
 - **Verification:** 86 Flutter tests, six rules-emulator groups and the Android SDK scenario pass. See [verification/PHASE_3.md](verification/PHASE_3.md). Earlier evidence remains in the Phase 1/2 records; no full-app UI or release/OAuth success is claimed yet.
-- **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`) and GYM-290 (`eaddbce`, receipt `8ce31d1`) remain delivered. GYM-390 commit/push is pending.
-- **Active scope:** remaining phases 3–8 are now authorized. Start with GYM-301;
-  D02/D04/D08 were resolved explicitly before dependent implementation. Phase 3
-  and later checkboxes remain unchecked until their own verification passes.
+- **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`), GYM-290 (`eaddbce`, receipt `8ce31d1`) and GYM-390 (`cf543f8`) are pushed and remotely verified. Phase 3 receipt follows the same protocol.
+- **Active scope:** continue with GYM-401 and Phases 4–8. D02/D04/D08 were resolved
+  explicitly before dependent implementation. Later checkboxes remain unchecked
+  until their own verification passes.
