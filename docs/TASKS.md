@@ -2,8 +2,9 @@
 
 Planning baseline: 27 October 2026. Platform: Android. UI: Egyptian Arabic, RTL.
 
-This checklist tracks verified implementation. Phases 1–2 are delivered. The latest
-user request authorizes all remaining phases (3–8), with the existing verified
+This checklist tracks verified implementation. Phases 1–3 are delivered; Phase 4
+implementation is delivered. The latest user request authorizes all remaining
+phases (5–8), with the existing verified
 commit/push checkpoints. Deployment and store publication remain separate.
 
 ## Sources and working rules
@@ -278,7 +279,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-501 — Deliver the members list, search, and filters
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 128-test suite, clean format/analysis and two native Android scenarios; see [Phase 5 verification](verification/PHASE_5.md).
 - **Depends on:** GYM-202, GYM-302, GYM-303, GYM-403; D03 for exceptional coverage display.
 - **Scope/components:** members list Cubit, view, mobile/tablet layouts and focused row/filter widgets.
 - **Acceptance:** lazy list with name/status/expiry; local name search; All/Active/Expiring soon/Expired filters; add-member and new-subscription entry points. Mobile stacks controls/list; tablet uses available width for bounded controls and wider rows without a new device classifier. Recompute date-sensitive status on resume/local midnight, using injected Clock and cleaned-up timers. UI-V applies, including query/filter/scroll continuity, no-subscription display, cache-incomplete versus confirmed-empty, and preserving readable rows during mutation.
@@ -286,7 +288,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-502 — Deliver add/edit member and inline member selection
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 128-test suite, clean format/analysis and two native Android scenarios; see [Phase 5 verification](verification/PHASE_5.md).
 - **Depends on:** GYM-104, GYM-304, GYM-501.
 - **Scope/components:** member form/picker Cubits and shared form body, mobile sheets/tablet bounded forms.
 - **Acceptance:** trimmed required name, optional string phone with bidi isolation; stable-ID create/edit with immediate submission guard. New subscription opens member search and can add/select a member in the same flow. Preserve parent flow input and selection, return the newly created member, and keep controllers/form state above layout changes. UI-V applies, including validation, filtered-empty, incomplete lookup, pending/rejected writes and keyboard scrolling.
@@ -294,7 +297,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-503 — Deliver new subscriptions and early renewal
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 128-test suite, clean format/analysis and two native Android scenarios; see [Phase 5 verification](verification/PHASE_5.md).
 - **Depends on:** GYM-202, GYM-203, GYM-304, GYM-502; D01, D02, D03, D05.
 - **Scope/components:** subscription form Cubit/policy integration, shared form widget and mobile/tablet form hosts.
 - **Acceptance:** amount prefilled from current settings and editable; editable start, computed one-month end, current/new expiry preview. First/expired starts today; early renewal starts at current continuous expiry. Re-evaluate before submission and require fresh confirmation if preview becomes stale. Stable payment intent, payment recording date independent of coverage, no payment-date editor. UI-V applies; an open form and pending write survive resize, and offline completion follows local application without claiming cloud success.
@@ -302,7 +306,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-504 — Deliver details/history and subscription correction
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 128-test suite, clean format/analysis and two native Android scenarios; see [Phase 5 verification](verification/PHASE_5.md).
 - **Depends on:** GYM-501, GYM-503; D03.
 - **Scope/components:** member details Cubit/view/layouts, history widgets, subscription edit/delete form/dialog.
 - **Acceptance:** member info, status/current expiry, prominent renewal and complete history with amount/payment/coverage dates. Mobile stacks detail/history; tablet composes summary/history without changing route state. Edit amount/start and recompute only that record's end; preserve its ID/member/payment date. Permanent delete requires confirmation and updates coverage and report inputs without altering other dates. UI-V applies to missing/deleted member, incomplete history, pending/rejection and selection/form continuity.
@@ -310,7 +315,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-505 — Implement guarded permanent member cascade
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 128-test suite, clean format/analysis and two native Android scenarios; see [Phase 5 verification](verification/PHASE_5.md).
 - **Depends on:** GYM-304, GYM-305, GYM-504; D07 supported boundary.
 - **Scope/components:** narrowly scoped `MemberDeletionCoordinator`, repository/provider atomic batch capability, details deletion UI.
 - **Acceptance:** explicit confirmation names the member and warns that all subscriptions and historical statistics change. Enumerate complete subscription history, coordinate same-member mutations, and delete member plus every related subscription in one supported atomic batch. Block incomplete/oversized deletion with actionable Arabic feedback; independent drop-ins stay unchanged. Handle local removal and later rollback, with no soft delete/undo or silent multi-batch fallback. UI-V applies to dialogs, blocked/pending/rejected states, and resize while confirmation/submission is active.
@@ -431,6 +437,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 - **Implemented:** Phases 1–3 delivered; Phase 4 authentication/session implementation is ready. Gym feature destinations remain scaffolding. D01–D09 are resolved/satisfied; D10 package, Firebase registration and private local signing coordination are complete.
 - **Verification:** Phase 4 has 113 passing Flutter tests, clean analysis/formatting and a passing native Android auth/session scenario. See [verification/PHASE_4.md](verification/PHASE_4.md). Phase 3 rules/native evidence remains in [verification/PHASE_3.md](verification/PHASE_3.md). Actual Google OAuth is assigned to the user and remains unverified; no full-app or release-artifact success is claimed.
 - **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`), GYM-290 (`eaddbce`, receipt `8ce31d1`) and GYM-390 (`cf543f8`, receipt `cbb77e8`) are pushed and remotely verified. Phase 4 implementation `d59e592` is also pushed and remotely verified; its full verification gate remains open as recorded above.
-- **Active scope:** stop after Phase 4, as explicitly requested. GYM-401/GYM-490
-  await the user's real Android Google sign-in result. Do not start Phases 5–8.
-  Later checkboxes remain unchecked until separately authorized and verified.
+- **Active scope:** complete ALL remaining tasks through Phase 8, superseding the
+  earlier Phase 4 stop. GYM-401/GYM-490 await the actual Google OAuth result;
+  independent later work continues.
+- **In progress:** Phase 5 implementation has 128 passing tests and two passing
+  native Android scenarios. See [Phase 5 evidence](verification/PHASE_5.md).

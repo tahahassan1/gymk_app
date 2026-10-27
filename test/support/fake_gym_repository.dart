@@ -50,14 +50,28 @@ class FakeGymRepository implements GymRepository {
   @override
   Stream<ReadSnapshot<List<Member>>> watchMembers() {
     memberConsumers++;
-    return members.stream;
+    return members.stream.map((value) {
+      _currentMembers = value;
+      return value;
+    });
   }
 
   @override
   Stream<ReadSnapshot<List<SubscriptionRecord>>> watchSubscriptions() {
     coverageConsumers++;
-    return subscriptions.stream;
+    return subscriptions.stream.map((value) {
+      _currentSubscriptions = value;
+      return value;
+    });
   }
+
+  ReadSnapshot<List<Member>>? _currentMembers;
+  ReadSnapshot<List<SubscriptionRecord>>? _currentSubscriptions;
+  @override
+  ReadSnapshot<List<Member>>? get currentMembers => _currentMembers;
+  @override
+  ReadSnapshot<List<SubscriptionRecord>>? get currentSubscriptions =>
+      _currentSubscriptions;
 
   @override
   Future<void> retryReads() async {

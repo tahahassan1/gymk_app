@@ -87,6 +87,25 @@ final class SubscriptionPolicy {
     );
   }
 
+  /// Replaces only one record, including its unchanged automatic future start.
+  RenewalPreview previewCorrection(
+    Iterable<CoveragePeriod> remaining, {
+    required DateOnly start,
+    CoveragePeriod? previous,
+  }) {
+    final today = clock.today();
+    final period = CoveragePeriod(start: start, end: start.addCalendarMonth());
+    return RenewalPreview._(
+      asOf: today,
+      currentExpiry: _assess([...remaining, ?previous], today).currentExpiry,
+      period: period,
+      resultingCurrentExpiry: _assess([
+        ...remaining,
+        period,
+      ], today).currentExpiry,
+    );
+  }
+
   MembershipAssessment _assess(
     Iterable<CoveragePeriod> periods,
     DateOnly today,

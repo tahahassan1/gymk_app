@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import '../../../../core/data/member_mutation_gate.dart';
+import '../../../../core/data/member_cascade_limit.dart';
 import '../../../../core/data/mutation_registry.dart';
 import '../../../../core/data/read_snapshot.dart';
 import '../../../../core/data/shared_read.dart';
+import '../../../../core/errors/app_failure.dart';
 import '../../../../features/dropins/data/models/dropin.dart';
 import '../../../../features/members/data/models/member.dart';
 import '../../../../features/settings/data/models/gym_settings.dart';
@@ -234,9 +236,31 @@ final class FirestoreGymRepository implements GymRepository {
     String memberId,
     List<String> subscriptionIds, {
     required String operationId,
-  }) => _memberGate.run(
-    memberId,
-    () => _submit(
+  }) => _memberGate.run(memberId, () {
+    final members = currentMembers;
+    final history = currentSubscriptions;
+    if (members == null ||
+        history == null ||
+        !members.isComplete ||
+        !history.isComplete) {
+      throw const AppFailure(FailureKind.incompleteData);
+    }
+    if (!members.data.any((m) => m.id == memberId)) {
+      throw const AppFailure(FailureKind.notFound);
+    }
+    final actual = history.data
+        .where((r) => r.memberId == memberId)
+        .map((r) => r.id)
+        .toSet();
+    if (actual.length > MemberCascadeLimit.subscriptions) {
+      throw const AppFailure(FailureKind.tooLarge);
+    }
+    if (actual.length != subscriptionIds.length ||
+        actual.length != subscriptionIds.toSet().length ||
+        !actual.containsAll(subscriptionIds)) {
+      throw const AppFailure(FailureKind.conflict, code: 'stale-history');
+    }
+    return _submit(
       id: operationId,
       target: memberId,
       action: MutationAction.deleteMember,
@@ -244,8 +268,8 @@ final class FirestoreGymRepository implements GymRepository {
       observation: _observeCascade(memberId),
       write: () =>
           provider.deleteMemberWithSubscriptions(memberId, subscriptionIds),
-    ),
-  );
+    );
+  });
 
   Stream<bool> _observeCascade(String memberId) {
     final beforeMembers = _members.latest;

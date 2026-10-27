@@ -10,6 +10,9 @@ import '../features/auth/presentation/views/session_loading_view.dart';
 import '../features/auth/presentation/views/sign_in_view.dart';
 import '../features/auth/presentation/widgets/session_mutation_banner.dart';
 import '../features/members/business_logic/cubit/members_cubit.dart';
+import '../features/members/presentation/views/members_view.dart';
+import '../features/members/presentation/views/member_details_view.dart';
+import '../features/subscriptions/presentation/views/subscription_route_view.dart';
 import '../l10n/app_localizations.dart';
 import 'app_destination.dart';
 import 'app_routes.dart';
@@ -81,26 +84,35 @@ GoRouter createAppRouter({
               GoRoute(
                 path: destination.path,
                 builder: (context, state) =>
-                    FoundationDestinationView(destination: destination),
+                    auth != null && destination == AppDestination.members
+                    ? const MembersView()
+                    : FoundationDestinationView(destination: destination),
                 routes: destination == AppDestination.members
                     ? [
                         GoRoute(
                           path: AppRoutes.memberSegment,
-                          builder: (context, state) =>
-                              FoundationDestinationView(
-                                destination: destination,
-                                title: AppLocalizations.of(context)
-                                    .memberDetails,
-                              ),
+                          builder: (context, state) => auth != null
+                              ? MemberDetailsView(
+                                  memberId: state.pathParameters['memberId']!,
+                                )
+                              : FoundationDestinationView(
+                                  destination: destination,
+                                  title: AppLocalizations.of(context)
+                                      .memberDetails,
+                                ),
                           routes: [
                             GoRoute(
                               path: AppRoutes.subscriptionSegment,
-                              builder: (context, state) =>
-                                  FoundationDestinationView(
-                                    destination: destination,
-                                    title: AppLocalizations.of(context)
-                                        .subscription,
-                                  ),
+                              builder: (context, state) => auth != null
+                                  ? SubscriptionRouteView(
+                                      memberId:
+                                          state.pathParameters['memberId']!,
+                                    )
+                                  : FoundationDestinationView(
+                                      destination: destination,
+                                      title: AppLocalizations.of(context)
+                                          .subscription,
+                                    ),
                             ),
                           ],
                         ),
