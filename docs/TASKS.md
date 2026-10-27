@@ -268,7 +268,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 ### GYM-490 — Verify, commit and push Phase 4
 
 - [ ] Verified complete
-- **Status:** implementation delivery proceeds with passing available checks; the fully verified checkpoint remains open until the user's real Google sign-in result closes GYM-401. Commit/push evidence is recorded in [Phase 4 evidence](verification/PHASE_4.md); no configuration-only OAuth claim is made.
+- **Status:** implementation `d59e592` was committed, pushed normally and verified against the remote SHA with a clean worktree. The fully verified checkpoint remains open until the user's real Google sign-in result closes GYM-401. See [Phase 4 evidence](verification/PHASE_4.md); no configuration-only OAuth claim is made.
 - **Depends on:** GYM-401, GYM-402, GYM-403.
 - **Scope/components:** Phase 4 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after auth/session and relevant UI checks.
@@ -430,7 +430,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 - **Implemented:** Phases 1–3 delivered; Phase 4 authentication/session implementation is ready. Gym feature destinations remain scaffolding. D01–D09 are resolved/satisfied; D10 package, Firebase registration and private local signing coordination are complete.
 - **Verification:** Phase 4 has 113 passing Flutter tests, clean analysis/formatting and a passing native Android auth/session scenario. See [verification/PHASE_4.md](verification/PHASE_4.md). Phase 3 rules/native evidence remains in [verification/PHASE_3.md](verification/PHASE_3.md). Actual Google OAuth is assigned to the user and remains unverified; no full-app or release-artifact success is claimed.
-- **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`), GYM-290 (`eaddbce`, receipt `8ce31d1`) and GYM-390 (`cf543f8`) are pushed and remotely verified. Phase 3 receipt follows the same protocol.
+- **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`), GYM-290 (`eaddbce`, receipt `8ce31d1`) and GYM-390 (`cf543f8`, receipt `cbb77e8`) are pushed and remotely verified. Phase 4 implementation `d59e592` is also pushed and remotely verified; its full verification gate remains open as recorded above.
 - **Active scope:** stop after Phase 4, as explicitly requested. GYM-401/GYM-490
   await the user's real Android Google sign-in result. Do not start Phases 5–8.
   Later checkboxes remain unchecked until separately authorized and verified.

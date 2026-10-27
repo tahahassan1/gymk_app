@@ -112,5 +112,14 @@ additional durable store or event-based Bloc is introduced in Phase 4.
 Final format/analysis and 113-test suite pass. The native session scenario passes,
 including the open-dialog teardown regression. `git diff --check` and the staged
 review pass; only Phase 4 files and their documentation are included. Private
-signing material is excluded. Implementation SHA/push receipt follows remote
-verification; GYM-490 remains open solely for the outstanding Google OAuth result.
+signing material is excluded.
+
+Implementation `d59e592e7f402e0ea239f0cd847e992f0e403f68` was pushed normally to
+`origin/main`; `git ls-remote origin refs/heads/main` matched local HEAD exactly.
+The remaining worktree was clean, with no ahead/behind divergence. This receipt
+is pushed and remotely verified using the same protocol. GYM-490 remains open
+solely for the outstanding real Google sign-in result, despite successful code
+delivery. Work stops here; Phases 5–8 are untouched.
+
+Final debug APK SHA-256:
+`55DC4C41107144C94EBDE6140B333B3C49FD99F629334F527447EB2FF40C65DE`.
