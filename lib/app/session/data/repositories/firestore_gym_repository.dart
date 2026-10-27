@@ -86,6 +86,7 @@ final class FirestoreGymRepository implements GymRepository {
     required MutationAction action,
     required Stream<bool> observation,
     required Future<void> Function() write,
+    String? targetName,
   }) => _registry.submit(
     id: id,
     target: target,
@@ -93,6 +94,7 @@ final class FirestoreGymRepository implements GymRepository {
     localObservation: observation,
     write: write,
     mapFailure: firebaseFailure,
+    targetName: targetName,
   );
 
   ReadSnapshot<T>? _current<T>(SharedRead<ReadSnapshot<T>> read) {
@@ -112,6 +114,7 @@ final class FirestoreGymRepository implements GymRepository {
           id: operationId,
           target: member.id,
           action: MutationAction.saveMember,
+          targetName: member.name,
           observation: _observed(
             _members,
             (records) => records.any(
@@ -136,6 +139,7 @@ final class FirestoreGymRepository implements GymRepository {
       id: operationId,
       target: record.memberId,
       action: MutationAction.saveSubscription,
+      targetName: _memberName(record.memberId),
       observation: _observed(
         _subscriptions,
         (records) => records.any(
@@ -162,6 +166,7 @@ final class FirestoreGymRepository implements GymRepository {
       id: operationId,
       target: record.memberId,
       action: MutationAction.deleteSubscription,
+      targetName: _memberName(record.memberId),
       observation: _observed(
         _subscriptions,
         (records) => !records.any((value) => value.id == record.id),
@@ -176,6 +181,7 @@ final class FirestoreGymRepository implements GymRepository {
         id: operationId,
         target: record.id,
         action: MutationAction.saveDropin,
+        targetName: record.name,
         observation: _observed(
           _dropins,
           (records) => records.any(
@@ -195,6 +201,7 @@ final class FirestoreGymRepository implements GymRepository {
         id: operationId,
         target: record.id,
         action: MutationAction.deleteDropin,
+        targetName: record.name,
         observation: _observed(
           _dropins,
           (records) => !records.any((value) => value.id == record.id),
@@ -210,6 +217,7 @@ final class FirestoreGymRepository implements GymRepository {
     id: operationId,
     target: uid,
     action: MutationAction.saveSettings,
+    targetName: settings.gymName,
     observation: _observed(
       _settings,
       (value) =>
@@ -232,6 +240,7 @@ final class FirestoreGymRepository implements GymRepository {
       id: operationId,
       target: memberId,
       action: MutationAction.deleteMember,
+      targetName: _memberName(memberId),
       observation: _observeCascade(memberId),
       write: () =>
           provider.deleteMemberWithSubscriptions(memberId, subscriptionIds),
@@ -270,6 +279,13 @@ final class FirestoreGymRepository implements GymRepository {
         await historySubscription.cancel();
       };
     });
+  }
+
+  String? _memberName(String id) {
+    for (final member in currentMembers?.data ?? const <Member>[]) {
+      if (member.id == id) return member.name;
+    }
+    return null;
   }
 
   @override

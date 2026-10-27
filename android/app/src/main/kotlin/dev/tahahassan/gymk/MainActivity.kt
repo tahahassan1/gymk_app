@@ -1,4 +1,4 @@
-package com.example.gymk_app
+package dev.tahahassan.gymk
 
 import io.flutter.embedding.android.FlutterActivity
 

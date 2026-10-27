@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:gymk_app/app/session/data/repositories/gym_repository.dart';
 import 'package:gymk_app/core/data/read_snapshot.dart';
+import 'package:gymk_app/core/data/mutation_registry.dart';
 import 'package:gymk_app/features/members/data/models/member.dart';
 import 'package:gymk_app/features/subscriptions/data/models/subscription_record.dart';
 
@@ -17,6 +18,32 @@ class FakeGymRepository implements GymRepository {
   int memberConsumers = 0;
   int coverageConsumers = 0;
   int retries = 0;
+  int mutationConsumers = 0;
+  int _ids = 0;
+  final mutationSource = StreamController<List<MutationNotice>>.broadcast(
+    sync: true,
+  );
+  List<MutationNotice> notices = const [];
+
+  @override
+  String newId() => 'fake-${++_ids}';
+  @override
+  List<MutationNotice> get mutations => notices;
+  @override
+  Stream<List<MutationNotice>> get mutationChanges {
+    mutationConsumers++;
+    return mutationSource.stream;
+  }
+
+  void emitMutations(List<MutationNotice> value) {
+    notices = value;
+    mutationSource.add(value);
+  }
+
+  @override
+  void dismissFailure(String operationId) => emitMutations(
+    notices.where((notice) => notice.id != operationId).toList(),
+  );
 
   @override
   String get uid => 'owner';
@@ -41,6 +68,7 @@ class FakeGymRepository implements GymRepository {
   Future<void> close() async {
     await members.close();
     await subscriptions.close();
+    await mutationSource.close();
   }
 
   @override

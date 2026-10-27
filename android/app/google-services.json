@@ -14,6 +14,59 @@
       },
       "oauth_client": [
         {
+          "client_id": "525961543594-rf14qmjqltga9213g4f8ku1s3nqgkf9s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gymk_app",
+            "certificate_hash": "dd365c1c85ec57fed67e12968234fd4db12b1404"
+          }
+        },
+        {
+          "client_id": "525961543594-95gg6ut73r9lfo391nqkgh2haguhcvhj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd7r3vwK4DoT6xLIlvcO60mUmKHiwuLo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "525961543594-95gg6ut73r9lfo391nqkgh2haguhcvhj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525961543594:android:e2daf8fbbd33c03209f5d3",
+        "android_client_info": {
+          "package_name": "dev.tahahassan.gymk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "525961543594-a8e5th6sa59fl2eev81i2cetjv9g9sm8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.tahahassan.gymk",
+            "certificate_hash": "dd365c1c85ec57fed67e12968234fd4db12b1404"
+          }
+        },
+        {
+          "client_id": "525961543594-ke8bgkrdsm377mjfltestfkaeoteva4u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.tahahassan.gymk",
+            "certificate_hash": "89e78fd9aa323e44352faf4423bfeb53ef837a8a"
+          }
+        },
+        {
           "client_id": "525961543594-95gg6ut73r9lfo391nqkgh2haguhcvhj.apps.googleusercontent.com",
           "client_type": 3
         }

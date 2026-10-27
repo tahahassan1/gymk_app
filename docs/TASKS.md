@@ -59,7 +59,7 @@ are marked complete. Independent work can proceed.
 | D07 | Resolved boundary, 27 October 2026: guarded complete-history single-batch member deletion; block incomplete/oversized history. Larger cascades and cross-device coordination are outside MVP. | GYM-505 still verifies actual SDK/backend limits and documents the implemented guard; never silently split batches. |
 | D08 | Resolved by user, 27 October 2026: both initial prices are zero; any temporary name is acceptable (`جيمك` selected). | Create only on server-confirmed absence; preserve existing settings. Owners edit these values through settings. |
 | D09 | Asset prerequisite, satisfied in Phase 1: Cairo 400/600/700 and SIL license are bundled from Google Fonts. DESIGN_STYLE's older future-icon wording yields to AGENTS.md and the existing square logo. | GYM-102/105 reuse `assets/images/logo.png` and `assets/lotties/loading.json`; no new artwork or transparency conversion. This resolves an asset prerequisite, not a product choice. |
-| D10 | User confirms `dev.tahahassan.gymk` and requests new SHA-1/Firebase configuration. No release keystore exists. | Coordinate package/Firebase registration and create private local signing inputs in Phase 4. Do not commit credentials; actual Google OAuth/release verification remains required. |
+| D10 | Production ID `dev.tahahassan.gymk` is configured with its new Firebase Android registration and registered debug/upload SHA-1s. Private local signing inputs were created and Gradle verified both fingerprints. | Configuration/signing coordination is complete. The user will perform real Google sign-in; no successful OAuth result is recorded yet. Final release-artifact verification remains Phase 8. See verification/PHASE_4.md. |
 
 Documentation conflicts to reconcile: PRD's blanket offline promise must retain the confirmed limits for first download, unverified cache, and safe cascades. DESIGN_STYLE's phone-focused guidance and bottom tabs extend to two layouts with the same four destinations; AGENTS.md/ARCHITECTURE require mobile/tablet compositions now. No new product decision is needed for those confirmed constraints.
 
@@ -241,6 +241,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 ### GYM-401 — Implement Google sign-in and restore sessions
 
 - [ ] Verified complete
+- **Evidence/status:** implemented; auth fake tests and adaptive RTL login checks pass, and native Firebase session restoration passes. Package/configuration and both registered SHA-1s agree. The user will test real Google sign-in; this runtime gate remains unverified. See [Phase 4 evidence](verification/PHASE_4.md).
 - **Depends on:** GYM-102, GYM-301; setup prerequisite D10.
 - **Scope/components:** auth data/provider/repository, `business_logic/cubit/`, sign-in view/mobile/tablet layouts, Android permissions/configuration.
 - **Acceptance:** compatible Google sign-in/Firebase Auth APIs, a single Google action, cancellation/retry/first-use internet feedback, restored authenticated session offline. Mobile uses a readable stacked surface; tablet uses bounded content with the same action/state. Preserve supplied branding. Add main-manifest network permission for release functionality. UI-V applies; sign-in progress/error survives resize without duplicate requests.
@@ -248,7 +249,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-402 — Bootstrap first-account settings safely
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** fake tests cover existing/absent settings, repeat identities, permission recovery and unverified cache absence. The isolated Android native scenario verifies bootstrap, retained custom prices on repeated login and offline restoration. See [Phase 4 evidence](verification/PHASE_4.md). GYM-401's real Google consent check remains separately open.
 - **Depends on:** GYM-302, GYM-304, GYM-305, GYM-401; D01, D05, D08.
 - **Scope/components:** settings repository/provider, authenticated bootstrap state and loading/recovery UI.
 - **Acceptance:** create the settings map only after server-confirmed absence, with resolved initial values. Never replace existing prices/name on login or mistake an empty offline cache for a missing user. Initial online setup is separate from ordinary restored offline use. UI-V applies to setup/loading/retry/incomplete states.
@@ -256,7 +258,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-403 — Wire auth redirects, scoped sessions, and mutation feedback
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** widget regressions verify nested navigation/form/dialog teardown and persistent feedback across resize; Android native A→sign-out→B with cached A rows and an offline pending change passes, including old Cubit disposal and no previous account feedback/dialog. Sign-out warning UX remains GYM-702. See [Phase 4 evidence](verification/PHASE_4.md).
 - **Depends on:** GYM-104, GYM-303, GYM-304, GYM-402; D04 for indicator presentation.
 - **Scope/components:** router redirects, DI/session scope, presentation listeners and pending/rejection feedback.
 - **Acceptance:** captured UID per tenant scope; cancel/dispose old Cubits, projections and listeners on account change; reset tenant navigation/forms. No prior gym data flashes in the next account. Present accurate local/pending/rejected feedback, with optional indicator only as resolved. Effects fire once; no writes from route/layout builders. UI-V applies to restored/loading/error sessions and feedback across both shell compositions.
@@ -265,6 +268,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 ### GYM-490 — Verify, commit and push Phase 4
 
 - [ ] Verified complete
+- **Status:** implementation delivery proceeds with passing available checks; the fully verified checkpoint remains open until the user's real Google sign-in result closes GYM-401. Commit/push evidence is recorded in [Phase 4 evidence](verification/PHASE_4.md); no configuration-only OAuth claim is made.
 - **Depends on:** GYM-401, GYM-402, GYM-403.
 - **Scope/components:** Phase 4 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after auth/session and relevant UI checks.
@@ -424,9 +428,9 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ## Current handoff
 
-- **Implemented:** Phases 1–3 delivered. Gym feature destinations remain scaffolding until their UI phases. D01–D09 are resolved/satisfied; D10 identity is confirmed and signing/Firebase coordination is in progress for Phase 4.
-- **Verification:** 86 Flutter tests, six rules-emulator groups and the Android SDK scenario pass. See [verification/PHASE_3.md](verification/PHASE_3.md). Earlier evidence remains in the Phase 1/2 records; no full-app UI or release/OAuth success is claimed yet.
+- **Implemented:** Phases 1–3 delivered; Phase 4 authentication/session implementation is ready. Gym feature destinations remain scaffolding. D01–D09 are resolved/satisfied; D10 package, Firebase registration and private local signing coordination are complete.
+- **Verification:** Phase 4 has 113 passing Flutter tests, clean analysis/formatting and a passing native Android auth/session scenario. See [verification/PHASE_4.md](verification/PHASE_4.md). Phase 3 rules/native evidence remains in [verification/PHASE_3.md](verification/PHASE_3.md). Actual Google OAuth is assigned to the user and remains unverified; no full-app or release-artifact success is claimed.
 - **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`), GYM-290 (`eaddbce`, receipt `8ce31d1`) and GYM-390 (`cf543f8`) are pushed and remotely verified. Phase 3 receipt follows the same protocol.
-- **Active scope:** continue with GYM-401 and Phases 4–8. D02/D04/D08 were resolved
-  explicitly before dependent implementation. Later checkboxes remain unchecked
-  until their own verification passes.
+- **Active scope:** stop after Phase 4, as explicitly requested. GYM-401/GYM-490
+  await the user's real Android Google sign-in result. Do not start Phases 5–8.
+  Later checkboxes remain unchecked until separately authorized and verified.

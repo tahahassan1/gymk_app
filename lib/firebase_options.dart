@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDd7r3vwK4DoT6xLIlvcO60mUmKHiwuLo0',
-    appId: '1:525961543594:android:5a683237d42bbd5909f5d3',
+    appId: '1:525961543594:android:e2daf8fbbd33c03209f5d3',
     messagingSenderId: '525961543594',
     projectId: 'gymk-app',
     storageBucket: 'gymk-app.firebasestorage.app',

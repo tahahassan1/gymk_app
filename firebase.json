@@ -4,14 +4,14 @@
       "android": {
         "default": {
           "projectId": "gymk-app",
-          "appId": "1:525961543594:android:5a683237d42bbd5909f5d3",
+          "appId": "1:525961543594:android:e2daf8fbbd33c03209f5d3",
           "fileOutput": "android/app/google-services.json"
         }
       },
       "dart": {
         "lib/firebase_options.dart": {
           "projectId": "gymk-app",
-          "configurations": { "android": "1:525961543594:android:5a683237d42bbd5909f5d3" }
+          "configurations": { "android": "1:525961543594:android:e2daf8fbbd33c03209f5d3" }
         }
       }
     }

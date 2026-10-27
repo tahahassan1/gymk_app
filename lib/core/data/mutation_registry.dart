@@ -21,9 +21,11 @@ final class MutationNotice {
     required this.action,
     required this.stage,
     required this.failure,
+    this.targetName,
   });
   final String id;
   final String target;
+  final String? targetName;
   final MutationAction action;
   final MutationStage stage;
   final AppFailure? failure;
@@ -32,10 +34,11 @@ final class MutationNotice {
 }
 
 final class MutationHandle {
-  MutationHandle._(this.id, this.target, this.action);
+  MutationHandle._(this.id, this.target, this.action, this.targetName);
 
   final String id;
   final String target;
+  final String? targetName;
   final MutationAction action;
   MutationStage _stage = MutationStage.submitted;
   AppFailure? _failure;
@@ -68,6 +71,7 @@ final class MutationRegistry {
         action: handle.action,
         stage: handle.stage,
         failure: handle.failure,
+        targetName: handle.targetName,
       ),
     ),
   );
@@ -80,13 +84,14 @@ final class MutationRegistry {
     required Stream<bool> localObservation,
     required Future<void> Function() write,
     required AppFailure Function(Object) mapFailure,
+    String? targetName,
   }) {
     if (_closed) throw const AppFailure(FailureKind.unauthenticated);
     final previous = _handles[id];
     if (previous != null && previous.stage != MutationStage.rejected) {
       return previous;
     }
-    final handle = MutationHandle._(id, target, action);
+    final handle = MutationHandle._(id, target, action, targetName);
     _handles[id] = handle;
     _notify();
     _observers[id] = localObservation.listen(

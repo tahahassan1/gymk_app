@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -7,8 +9,16 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val gymkSigningFile = rootProject.file("key.properties")
+val gymkSigning = Properties().apply {
+    if (gymkSigningFile.exists()) gymkSigningFile.inputStream().use { load(it) }
+}
+if (!gymkSigningFile.exists() && gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }) {
+    throw GradleException("Release signing requires the private android/key.properties file. See README.")
+}
+
 android {
-    namespace = "com.example.gymk_app"
+    namespace = "dev.tahahassan.gymk"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -18,8 +28,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.gymk_app"
+        applicationId = "dev.tahahassan.gymk"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -32,11 +41,19 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (gymkSigningFile.exists()) {
+            create("release") {
+                keyAlias = gymkSigning.getProperty("keyAlias")
+                keyPassword = gymkSigning.getProperty("keyPassword")
+                storeFile = file(gymkSigning.getProperty("storeFile"))
+                storePassword = gymkSigning.getProperty("storePassword")
+            }
+        }
+    }
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (gymkSigningFile.exists()) signingConfig = signingConfigs.getByName("release")
         }
     }
 }

@@ -14,10 +14,12 @@ class AppShellFrame extends StatelessWidget {
     super.key,
     required this.mode,
     required this.navigationShell,
+    this.feedback = const SizedBox.shrink(),
   });
 
   final AppLayoutMode mode;
   final StatefulNavigationShell navigationShell;
+  final Widget feedback;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,15 @@ class AppShellFrame extends StatelessWidget {
             ],
             Expanded(
               key: const ValueKey('branch-host'),
-              child: AppLayoutScope(mode: mode, child: navigationShell),
+              child: AppLayoutScope(
+                mode: mode,
+                child: Column(
+                  children: [
+                    feedback,
+                    Expanded(child: navigationShell),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
