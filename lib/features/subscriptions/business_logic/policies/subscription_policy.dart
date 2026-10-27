@@ -54,8 +54,10 @@ final class SubscriptionPolicy {
   static const nearExpiryDays = 3;
   final Clock clock;
 
-  MembershipAssessment assess(Iterable<CoveragePeriod> periods) =>
-      _assess(periods, clock.today());
+  MembershipAssessment assess(
+    Iterable<CoveragePeriod> periods, {
+    DateOnly? asOf,
+  }) => _assess(periods, asOf ?? clock.today());
 
   bool isManualStartAllowed(DateOnly start) => !start.isAfter(clock.today());
 

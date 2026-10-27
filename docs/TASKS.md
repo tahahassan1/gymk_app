@@ -2,7 +2,9 @@
 
 Planning baseline: 27 October 2026. Platform: Android. UI: Egyptian Arabic, RTL.
 
-This checklist tracks verified implementation. Phase 1 is delivered. The current request authorizes Phase 2 only, including its verified commit/push checkpoint; Phases 3–8 remain unauthorized for implementation.
+This checklist tracks verified implementation. Phases 1–2 are delivered. The latest
+user request authorizes all remaining phases (3–8), with the existing verified
+commit/push checkpoints. Deployment and store publication remain separate.
 
 ## Sources and working rules
 
@@ -14,7 +16,7 @@ This checklist tracks verified implementation. Phase 1 is delivered. The current
 - `.agents/skills/flutter-ui-cleanup/SKILL.md` provides useful extraction/controller/rebuild guidance, but its alternate folder mappings yield to the paths above. Phase 1 supplies `AppColors` and `AppRoutes`; do not invent the skill's other example contracts (`AppStyles`, `DBKeys`). `.agents/skills/flutter-code-review/SKILL.md` is the final read-only self-review checklist.
 - Preserve unrelated changes. The pre-Phase-1 baseline below is historical. At Phase 2 start, local HEAD and remote `main` both matched `4f12849eb4fdc24959434ee8c9280cbde1aeb604`, with a clean worktree. Do not reset, clean, or regenerate the project.
 - Keep IDs stable. Check a task only after its acceptance criteria and verification pass; record commands, outcomes, and any blocked runtime checks beneath that task. Partial work stays unchecked. Add dependency changes explicitly.
-- Phase numbers organize delivery; listed task dependencies determine readiness, without blanket barriers requiring every earlier CRUD flow. In particular, initial GYM-603 report work may start when its read contracts are ready; GYM-604 verifies later CRUD integration. This does not expand the current Phase 2-only authorization.
+- Phase numbers organize delivery; listed task dependencies determine readiness, without blanket barriers requiring every earlier CRUD flow. In particular, initial GYM-603 report work may start when its read contracts are ready; GYM-604 verifies later CRUD integration. Remaining phases are now authorized, but verification gates remain in force.
 
 ## Planning baseline (before Phase 1)
 
@@ -49,15 +51,15 @@ are marked complete. Independent work can proceed.
 | ID | Unresolved item and existing guidance | Gate / next action |
 | --- | --- | --- |
 | D01 | Resolved by user, 27 October 2026: whole EGP, zero decimal places, scale 1. The stored integer unit is one pound, not a piastre. | Applied in GYM-203 and documented in PRD/ARCHITECTURE/DESIGN_STYLE. Actual initial prices remain D08; no currency picker is authorized. |
-| D02 | PRD says dates have no time, but calls `paidAt` the moment of recording. ARCHITECTURE proposes `YYYY-MM-DD` strings for coverage/session dates and recording date for `paidAt`, with timestamp metadata for `createdAt`. | Confirm concrete persisted encodings before codecs/rules/reporting integration: GYM-301, GYM-305, GYM-503, GYM-603. No payment-date editor is authorized. Pure calendar arithmetic can proceed. |
+| D02 | Resolved by user, 27 October 2026: Gregorian `YYYY-MM-DD` strings for coverage/session dates and `paidAt`; payment date is the local recording date. `createdAt` is a client timestamp. | Apply in codecs/rules/reports. No payment-date editor. |
 | D03 | Resolved by user, 27 October 2026: prohibit manual future starts, exempt automatic early renewal. If records remain but today is uncovered, including future-only history, classify as expired and renew from today. Preserve remaining dates; no upcoming status. | Applied in GYM-202. Current expiry requires coverage containing today; past expiry and future history ranges remain separate facts. Later forms must distinguish a newly selected manual start from an unchanged automatic future start during amount correction. |
-| D04 | PRD leaves a sync indicator open; design recommends compact pending/error feedback. Correct local/pending/acknowledged/rejected semantics and eventual error handling are mandatory. | Decide placement and scope of an optional persistent indicator before GYM-403 is complete. GYM-304 must implement accurate mutation tracking regardless; never infer global sync or connectivity from one snapshot. |
+| D04 | Resolved by user, 27 October 2026: compact persistent pending/error feedback in the shared shell. | Track observed session mutations and rejected actions; never infer global sync/connectivity. |
 | D05 | Resolved by user, 27 October 2026: allow zero default prices; subscription/drop-in payment records must be positive. Negative/invalid amounts are rejected. | Applied in GYM-203 with explicit amount purpose. GYM-305 rules and later forms must use the same distinction. |
-| D06 | Three days is the current near-expiry rule. PRD asks whether it stays fixed for MVP and becomes configurable later. | Centralize three days now; no configuration control is authorized. Clarify the roadmap before release, without blocking current status-policy work. |
-| D07 | Incomplete history prevents safe member cascade; history exceeding one atomic batch requires an explicit supported boundary. Architecture recommends a guarded, complete-data, single-batch flow. Larger-history recovery/product handling is unresolved. | GYM-505 must verify actual SDK/backend limits, block unsafe cascades with clear copy, and document the supported boundary. If larger cascades must be supported, design/authorize that separately; do not add a backend or silently split batches. Settle production handling in GYM-803. |
-| D08 | First-login default gym name and exact initial subscription/drop-in prices are not supplied. Default record creation is required, but values are not defined. | Resolve before GYM-402 can create settings and before GYM-701 is complete. Do not invent initial prices or reset existing settings. |
+| D06 | Resolved by user, 27 October 2026: three days fixed for MVP; no settings control. | Keep the centralized policy threshold. |
+| D07 | Resolved boundary, 27 October 2026: guarded complete-history single-batch member deletion; block incomplete/oversized history. Larger cascades and cross-device coordination are outside MVP. | GYM-505 still verifies actual SDK/backend limits and documents the implemented guard; never silently split batches. |
+| D08 | Resolved by user, 27 October 2026: both initial prices are zero; any temporary name is acceptable (`جيمك` selected). | Create only on server-confirmed absence; preserve existing settings. Owners edit these values through settings. |
 | D09 | Asset prerequisite, satisfied in Phase 1: Cairo 400/600/700 and SIL license are bundled from Google Fonts. DESIGN_STYLE's older future-icon wording yields to AGENTS.md and the existing square logo. | GYM-102/105 reuse `assets/images/logo.png` and `assets/lotties/loading.json`; no new artwork or transparency conversion. This resolves an asset prerequisite, not a product choice. |
-| D10 | Production Android identity/signing and live Google/Firebase setup are unverified. Current package is a placeholder; changing it affects Firebase/OAuth registration. | Verify provider/fingerprints and package consistency in GYM-401. Confirm production application ID and signing before GYM-803; preserve current configuration until a coordinated change is needed. Never invent credentials. |
+| D10 | User confirms `dev.tahahassan.gymk` and requests new SHA-1/Firebase configuration. No release keystore exists. | Coordinate package/Firebase registration and create private local signing inputs in Phase 4. Do not commit credentials; actual Google OAuth/release verification remains required. |
 
 Documentation conflicts to reconcile: PRD's blanket offline promise must retain the confirmed limits for first download, unverified cache, and safe cascades. DESIGN_STYLE's phone-focused guidance and bottom tabs extend to two layouts with the same four destinations; AGENTS.md/ARCHITECTURE require mobile/tablet compositions now. No new product decision is needed for those confirmed constraints.
 
@@ -182,43 +184,48 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-301 — Define models/codecs and the Firebase provider boundary
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-101, GYM-201; D02 for persisted date codecs only.
 - **Scope/components:** feature `data/models/`, `data/providers/`, `data/repositories/`, `lib/core/errors/`, bootstrap and preserved Firebase files.
 - **Acceptance:** typed members/settings/subscriptions/drop-ins and repository interfaces; monetary fields are integer minor units, independent of monetary input parsing, currency formatting and initial default values. Document IDs are authoritative, references immutable. Providers own SDK serialization and captured-UID paths under the existing flat schema. Configure persistence/unlimited cache before first Firestore use; initialize Firebase using existing Android options. Typed read envelopes expose cache/completeness/pending metadata without leaking snapshots into widgets. Initialization has recoverable failure UI (UI-V).
 - **Verification:** codec round trips, malformed records, immutable references, UID path tests, bootstrap success/failure with fakes; Android Firebase initialization and persistence configuration. Confirm compatible FlutterFire versions at implementation time.
+- **Evidence:** immutable models/date codecs, typed `GymRepository`/captured-UID provider and recoverable initialization delivered. Four startup widget cases cover phone/tablet at 1×/2× text. Android integration invokes the actual bootstrap and verifies persistence/unlimited cache, using isolated emulators for all test data. See [Phase 3 verification](verification/PHASE_3.md).
 
 ### GYM-302 — Share tenant read streams and completeness projections
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-301.
 - **Scope/components:** repository implementations, `lib/app/session/` read projection.
 - **Acceptance:** one session source per required settings/member/subscription/drop-in dataset; index subscriptions by member without per-row queries. Preserve data during refresh/errors and distinguish cache-only/incomplete from server-confirmed complete. Full-session drop-in reads retain historical report coverage. Account disposal cancels listeners; no second durable cache or fake connectivity inference.
 - **Verification:** repository fakes/provider tests for shared listener counts, partial/empty/cache/server transitions, stream failures, cancellation and late results. Integration must demonstrate cached cold-start does not assert full completeness.
+- **Evidence:** one shared listener for each of settings/members/subscriptions/drop-ins, replay/retry and cancellation tests pass; members use an indexed history projection. Errors retain data but revoke completeness. Native SDK verifies cached-empty and reopened cached history stay unverified, immediate teardown and account A→B isolation. No per-row Firebase queries or second store.
 
 ### GYM-303 — Introduce immutable Cubit state/lifetime conventions through real consumers
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-302.
 - **Scope/components:** first feature/session Cubits and factories in `lib/app/di.dart`; repository fakes.
 - **Acceptance:** independent read/data/filter/submission/failure fields; explicit nullable clearing, handled stream errors and owned subscription/timer cleanup. Factories for route/form Cubits, constructor injection, no Cubit-to-Cubit subscriptions. Establish these through needed consumers, not generic state/CRUD frameworks.
 - **Verification:** fake-stream tests show cached data survives errors/mutations, failure can clear, close cancels resources and ignores late results, and reopening a route obtains the intended lifetime.
+- **Evidence:** first real `MembersCubit` and immutable independent state, explicit nullable failure clearing, handled stream errors and owned subscription cleanup. Repository-fake tests cover search/filter/date reassessment and 500 members with one date read per calculation; DI factory test proves a reopened route gets a fresh Cubit for the supplied tenant. Members UI and rollover scheduling remain Phase 5 work.
 
 ### GYM-304 — Track local writes through acknowledgement or rejection
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-302.
 - **Scope/components:** repository mutation handles, current-session operation tracking and per-member mutation coordination.
 - **Acceptance:** stable intent/document IDs, immediate double-submit guard, local stream application separate from cloud acknowledgement, handled write Futures after form closure, affected-action errors and rollback. Retry uncertain acceptance with the same ID. Serialize conflicting same-member operations. Track pending deletions even after rows disappear; Firestore remains the only durable queue. Do not promise a global pending count after restart.
 - **Verification:** fake-driven submission/duplicate/serialization tests; Android integration validates installed SDK behavior while offline, form release after local application, eventual rejection after form close, and retry without duplicate payments. These SDK cases must pass before core forms are marked complete.
+- **Evidence:** immutable operation notices and stable-ID mutation handles distinguish submitted/local/acknowledged/rejected outcomes; per-member gate releases after local application. Six focused mutation tests plus native offline save, rejection/rollback after local completion, duplicate-intent single record, and pending deletion after row disappearance pass. Eventual errors stay owned by the tenant repository; no persistent queue added.
 
 ### GYM-305 — Add schema-validating rules and emulator coverage
 
-- [ ] Verified complete
+- [x] Verified complete
 - **Depends on:** GYM-301; D05.
 - **Scope/components:** `firestore.rules`, `firestore.indexes.json` only as actual queries require, additive `firebase.json` emulator/rules configuration, rules tests.
 - **Acceptance:** owner-only reads/create/update/permanent-delete, unauthenticated/cross-UID denial, valid money/types/names/date encodings and immutable member references. Model and rules validation agree. Preserve existing Flutter mappings; isolate emulator fixtures from live data. Rules do not claim robust multi-device cascade integrity.
 - **Verification:** emulator tests for own valid CRUD, every collection and settings path, cross-tenant denial, malformed fields and forbidden reference changes. Queued rejection/rollback integration with GYM-304 is verified in GYM-801, without blocking initial rules. Do not deploy as part of this local task.
+- **Evidence:** six emulator groups pass for valid CRUD, owner/unauthenticated/cross-UID boundaries, whole positive records versus zero defaults, calendar dates/clamped one-month coverage, immutable references and atomic deletion. Additive emulator/rules configuration preserves Flutter mappings. Test-tool dependency audit reports zero vulnerabilities. Rules are not deployed.
 
 ### GYM-390 — Verify, commit and push Phase 3
 
@@ -227,6 +234,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 - **Scope/components:** Phase 3 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after data/state/rules and required SDK checks.
 - **Verification:** successful checks, reviewed commit, successful push and matching local/remote branch SHA.
+- **Checkpoint status:** implementation/SDK/rules checks passed; commit/push receipt remains pending until remote SHA verification.
 
 ## Phase 4 — Google authentication and tenant lifecycle
 
@@ -416,7 +424,9 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ## Current handoff
 
-- **Implemented:** Phases 1 and 2 only; gym feature destinations remain scaffolding. D01/D03/D05 are resolved as above, D09 is satisfied; D02/D04/D06/D07/D08/D10 remain open or unverified for later phases.
-- **Verification:** Phase 2 formatting, analysis, 34 focused policy/amount tests and the existing 21 widget tests pass. See [verification/PHASE_2.md](verification/PHASE_2.md). Prior Android foundation evidence and build workaround remain in [verification/PHASE_1.md](verification/PHASE_1.md); no new device/Firebase verification is claimed for pure policies.
-- **Delivery:** GYM-190 remains delivered (`89c154d`, receipt `4f12849`). GYM-290 passed: implementation `eaddbce` is committed, pushed and remotely verified, with a clean worktree before this documentation receipt. No Phase 2 blockers remain; this receipt follows the same push/SHA check.
-- **Next scope:** stop after Phase 2's delivery checkpoint. Phase 3 is planned but unauthorized; its persisted-date encoding prerequisite D02 remains unresolved.
+- **Implemented:** Phases 1–2 delivered; Phase 3 data/offline/state/rules implementation verified, awaiting its Git checkpoint. Gym feature destinations remain scaffolding until their UI phases. D01–D09 are resolved/satisfied; D10 identity is confirmed and signing/Firebase coordination is in progress for Phase 4.
+- **Verification:** 86 Flutter tests, six rules-emulator groups and the Android SDK scenario pass. See [verification/PHASE_3.md](verification/PHASE_3.md). Earlier evidence remains in the Phase 1/2 records; no full-app UI or release/OAuth success is claimed yet.
+- **Delivery:** GYM-190 (`89c154d`, receipt `4f12849`) and GYM-290 (`eaddbce`, receipt `8ce31d1`) remain delivered. GYM-390 commit/push is pending.
+- **Active scope:** remaining phases 3–8 are now authorized. Start with GYM-301;
+  D02/D04/D08 were resolved explicitly before dependent implementation. Phase 3
+  and later checkboxes remain unchecked until their own verification passes.

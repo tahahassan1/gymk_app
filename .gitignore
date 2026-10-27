@@ -46,3 +46,11 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Local Firebase test tooling and private Android signing inputs.
+node_modules/
+.firebase/
+*-debug.log
+android/key.properties
+*.jks
+*.keystore

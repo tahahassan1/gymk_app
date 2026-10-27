@@ -17,15 +17,16 @@ Use two explicit UI layout variants, mobile and tablet, within the Presentation 
 - Confirmed product rules override convenience in the architecture: permanent deletion, no archive/void workflow, owner-only tenancy, one-month memberships, and early renewal preserving remaining time.
 - Design defaults are defined in `DESIGN_STYLE.md`. The confirmed two-layout, framework-only adaptive requirement in this document overrides any earlier phone-only layout guidance in that design document.
 - The PRD confirms whole EGP (scale 1), zero defaults, and positive payment records.
-  Expiry-threshold configurability and a sync indicator remain open. Three days
-  is the current rule with no settings control; compact pending/error feedback
-  remains a presentation recommendation, not an approved indicator decision.
-- The PRD's date-only wording conflicts with its description of `paidAt` as a moment. Section 6 proposes a precise encoding without adding a payment-date feature.
+  The user confirms three days fixed for MVP, no threshold control, and compact
+  persistent pending/error feedback in the shared shell.
+- The user approves the date-only encoding in section 6: payment date is the local
+  recording date, with timestamp metadata only for createdAt. No payment-date editor.
 - Firestore cannot make data available offline before it has been fetched. Section 8 qualifies the PRD's broad offline promise; do not silently promise a capability the SDK cannot supply.
 - Manual future starts are prohibited; automatic early renewal is exempt.
   Gap/future-only history is expired when today is uncovered, with renewal from
-  today and remaining dates preserved (section 7). Cascades larger than one
-  write batch remain unresolved (section 10).
+  today and remaining dates preserved (section 7). The guarded single-batch cascade
+  boundary is approved; larger cascades and cross-device coordination are outside
+  this MVP (section 10).
 
 ## 2. Responsibilities and dependency direction
 
@@ -240,7 +241,7 @@ Keep all tenant-owned data under `users/{uid}`. Retain the PRD's flat child coll
 
 Use the document ID as the typed model ID. Do not maintain a second conflicting ID field. Do not store member status or a second authoritative expiry on the member document. Derive them from subscription records.
 
-### Proposed concrete encodings
+### Confirmed concrete encodings (27 October 2026)
 
 - `startDate`, `endDate`, and drop-in `date`: validated, zero-padded Gregorian `YYYY-MM-DD` strings representing a calendar date. Firestore has no special date-only scalar.
 - `paidAt`: the recording/payment calendar date in the same date-only encoding, assigned on form submission. This reconciles the PRD's date-only rule with its requirement that payment belongs to the recording month. If an exact payment instant is required later, explicitly revise this schema and the PRD together.
@@ -251,8 +252,8 @@ Use the document ID as the typed model ID. Do not maintain a second conflicting 
   confirmed this choice on 27 October 2026. No piastre conversion or floating-point
   sums. `GymkCurrency` centralizes the code and scale.
 - The app-facing DateOnly value is separate from timestamps and knows how to
-  compare and add a calendar month with end-of-month clamping. Persisted date
-  codecs remain gated by the unresolved concrete encoding decision.
+  compare and add a calendar month with end-of-month clamping. DateOnlyCodec
+  implements the user-approved zero-padded date-only storage encoding.
 
 Use the device's local calendar date for this single-location MVP, behind an injectable Clock. A fixed gym timezone is a future decision if devices across timezones become supported. Never convert a date-only value to UTC midnight and back just to store or compare it.
 
@@ -361,7 +362,9 @@ Define a repository-level mutation handle with a stable operation/document ID, o
 - Pending deletion can remove a row from local results; `hasPendingWrites` on a visible row is not a complete global tracker of all deletes. Track current-session mutation handles and do not promise an exact global pending count after process restart.
 - The SDK owns durable pending writes. Do not build a parallel persistent queue or custom conflict resolver.
 
-If the sync-indicator recommendation is accepted, expose conservative session-level states such as local changes pending, current observed data acknowledged, or failed action. Never say “all account data is synced” based solely on one listener.
+The confirmed compact shell indicator exposes conservative session-level pending
+or rejected action feedback. Never say “all account data is synced” based solely
+on one listener or treat cache origin as connectivity.
 
 ## 10. Editing, permanent deletion, and cascade limits
 

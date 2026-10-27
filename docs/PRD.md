@@ -18,7 +18,8 @@ Small gym owners track subscriptions on paper or in their heads. They don't know
 - Record a new subscription or renewal in as few steps as possible.
 - Record a drop-in session in seconds.
 - Show clear monthly statistics.
-- Work fully offline; changes sync automatically when the connection returns.
+- Work offline with downloaded/cached data; queued changes synchronize when the
+  connection returns. Keep incomplete cache and rejected writes explicit.
 
 ## 4. Out of Scope (MVP)
 
@@ -65,6 +66,9 @@ users/{uid}/dropins/{id}
 **Notes:**
 
 - Dates are stored as dates only (no time) to avoid timezone issues.
+- Confirmed encoding: Gregorian `YYYY-MM-DD` strings for coverage/session dates
+  and `paidAt`, which records the device-local date of submission. `createdAt`
+  uses a client timestamp as metadata. No payment-date editor.
 - A member's status is derived from their remaining subscription records; it is not stored. Early renewal extends their current membership expiry without interrupting their active status.
 - A drop-in is not linked to a member.
 - Money is stored as integer whole Egyptian pounds (EGP): the app's smallest
@@ -132,6 +136,9 @@ expiry and remaining future date ranges are separate history facts.
 - A single `Sign in with Google` button.
 - The first sign-in requires internet. After that the session works offline.
 - First sign-in creates the user document and default settings.
+- Initial settings: temporary gym name `جيمك`, subscription price 0 EGP, drop-in
+  price 0 EGP. Create only after server-confirmed absence; never reset existing
+  settings on subsequent sign-in.
 
 ### 9.2 Members (main tab)
 
@@ -185,14 +192,22 @@ expiry and remaining future date ranges are separate history facts.
 ## 10. Navigation
 
 `Bottom navigation` with 4 tabs: Members, Drop-ins, Statistics, Settings.
+Tablet composition uses the same four destinations with a navigation rail. Both
+layouts share feature state and preserve navigation/drafts during resize.
 
 ## 11. Offline Requirements
 
-- All screens work offline for reads and writes.
+- Normal screens/forms work offline with already loaded data. A fresh install
+  or uncached history cannot be downloaded without a connection.
 - Writes are cached locally and uploaded automatically when the connection returns.
 - The cache size is set to `unlimited` so no data is evicted.
 - Statistics are computed on-device because server-side aggregation needs a connection.
-- The first sign-in is the only operation that requires internet.
+- Initial authentication, server-confirmed account bootstrap and complete initial
+  download require internet. An unverified empty cache is not an empty gym or a
+  zero-income month. Unlimited cache does not automatically download all data.
+- Member deletion requires verified complete history and one supported atomic
+  batch. Block incomplete/oversized cascades. Local application is separate from
+  cloud acknowledgement; observe eventual rejection and rollback after forms close.
 
 ## 12. Security
 
@@ -226,7 +241,8 @@ There are no roles. A user reads and writes only their own data. The owner may c
 
 ## 15. Open Questions
 
-1. **Near-expiry threshold:** fixed at 3 days for the MVP, configurable later?
+1. **Near-expiry threshold — resolved:** fixed at three days for MVP, no control.
 2. **Fixing mistakes — resolved:** members, subscriptions, and drop-ins support editing and ordinary permanent deletion, as specified in rule 8.5.
 3. **Currency — resolved:** whole EGP, scale 1, under the validation above.
-4. **Sync indicator:** should the UI show that some changes haven't uploaded yet?
+4. **Sync indicator — resolved:** compact persistent shell feedback for observed
+   pending changes and rejected actions; no global connectivity/sync claim.

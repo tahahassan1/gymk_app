@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    function name(value) {
+      return value is string && value.size() > 0 && value == value.trim();
+    }
+    function id(value) {
+      return value is string && value.matches('[^/]+') && value != '.' && value != '..';
+    }
+    function daysInMonth(y, m) {
+      return m == 2 ? ((y % 400 == 0 || (y % 4 == 0 && y % 100 != 0)) ? 29 : 28)
+        : (m in [4, 6, 9, 11] ? 30 : 31);
+    }
+    function components(parts) {
+      let y = int(parts[0]);
+      let m = int(parts[1]);
+      let d = int(parts[2]);
+      return y >= 1 && y <= 9999 && m >= 1 && m <= 12
+        && d >= 1 && d <= daysInMonth(y, m);
+    }
+    function date(value) {
+      return value is string && value.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}')
+        && components(value.split('-'));
+    }
+    function oneMonth(start, end) {
+      let s = start.split('-');
+      let e = end.split('-');
+      let y = int(s[0]) + (int(s[1]) == 12 ? 1 : 0);
+      let m = int(s[1]) == 12 ? 1 : int(s[1]) + 1;
+      let last = daysInMonth(y, m);
+      let d = int(s[2]) > last ? last : int(s[2]);
+      return int(e[0]) == y && int(e[1]) == m && int(e[2]) == d;
+    }
+    function settings(value) {
+      return value is map
+        && value.keys().hasAll(['gymName', 'defaultSubscriptionPrice', 'defaultDropinPrice'])
+        && value.keys().hasOnly(['gymName', 'defaultSubscriptionPrice', 'defaultDropinPrice'])
+        && name(value.gymName)
+        && value.defaultSubscriptionPrice is int && value.defaultSubscriptionPrice >= 0
+        && value.defaultDropinPrice is int && value.defaultDropinPrice >= 0;
+    }
+    function member(value) {
+      return value.keys().hasAll(['name', 'createdAt'])
+        && value.keys().hasOnly(['name', 'phone', 'createdAt'])
+        && name(value.name) && value.createdAt is timestamp
+        && (!('phone' in value) || name(value.phone));
+    }
+    function subscription(value) {
+      return value.keys().hasAll(['memberId', 'startDate', 'endDate', 'amount', 'paidAt'])
+        && value.keys().hasOnly(['memberId', 'startDate', 'endDate', 'amount', 'paidAt'])
+        && id(value.memberId) && value.amount is int && value.amount > 0
+        && date(value.startDate) && date(value.endDate) && date(value.paidAt)
+        && oneMonth(value.startDate, value.endDate);
+    }
+    function dropin(value) {
+      return value.keys().hasAll(['amount', 'date'])
+        && value.keys().hasOnly(['name', 'amount', 'date'])
+        && (!('name' in value) || name(value.name))
+        && value.amount is int && value.amount > 0 && date(value.date);
+    }
+    match /users/{uid} {
+      allow read, delete: if owner(uid);
+      allow create, update: if owner(uid)
+        && request.resource.data.keys().hasOnly(['settings'])
+        && settings(request.resource.data.settings);
+      match /members/{memberId} {
+        allow read, delete: if owner(uid);
+        allow create: if owner(uid) && member(request.resource.data);
+        allow update: if owner(uid) && member(request.resource.data)
+          && request.resource.data.createdAt == resource.data.createdAt;
+      }
+      match /subscriptions/{subscriptionId} {
+        allow read, delete: if owner(uid);
+        allow create: if owner(uid) && subscription(request.resource.data)
+          && exists(/databases/$(database)/documents/users/$(uid)/members/$(request.resource.data.memberId));
+        allow update: if owner(uid) && subscription(request.resource.data)
+          && request.resource.data.memberId == resource.data.memberId
+          && request.resource.data.paidAt == resource.data.paidAt;
+      }
+      match /dropins/{dropinId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && dropin(request.resource.data);
+      }
+    }
+  }
+}

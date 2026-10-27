@@ -12,9 +12,9 @@ Confirmed product decisions: ordinary editing and permanent deletion, no archivi
 
 The PRD confirms whole EGP amounts (no fractional units), zero default prices and
 positive payment records. Currency display uses zero decimal places and the
-selected Western digit convention. Configurable expiry thresholds and a sync
-indicator remain open; compact sync feedback is still a recommendation. The
-current expiry threshold is three days; do not build a configuration control yet.
+selected Western digit convention. The threshold is confirmed fixed at three days
+for MVP, with no configuration control. Compact persistent pending/error feedback
+in the shared shell is approved, without global connectivity/sync claims.
 
 ## 2. Design direction
 
@@ -220,7 +220,10 @@ Use contextual states; do not use a blank screen for everything.
 | Pending local write | Recommended compact label: `محفوظ على الجهاز — في انتظار المزامنة` |
 | Remote rejection | Persistent affected-action error; do not retain a success claim |
 
-Sync presentation is a recommended default pending the PRD decision. Keep it low-emphasis and independent of membership status. A cache-sourced snapshot is not proof of no internet. A successful local write is not a completed cloud sync. Avoid repeatedly interrupting normal offline work with dialogs.
+The approved shell indicator stays low-emphasis and independent of membership
+status. A cache-sourced snapshot is not proof of no internet. A successful local
+write is not completed cloud sync. Avoid repeatedly interrupting normal offline
+work with dialogs; keep rejected-action feedback available until dismissed.
 
 ## 10. Arabic copy and RTL behavior
 
