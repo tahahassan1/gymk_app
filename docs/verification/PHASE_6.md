@@ -70,3 +70,8 @@ TestFlutterView viewport/density; an intermediate run exposed the mismatch betwe
 real keyboard physical insets and the simulated viewport. It now preserves focus
 and can reach Save. Actual OS rotation/window checks remain the Phase 8 gate.
 Normal commit/push/remote-SHA audit follows; Phase 7 continues afterward.
+
+Implementation `332ed6b96a086b9454daa142b3daf895c09f4539` was committed and pushed
+normally to origin/main. Remote SHA matched local HEAD exactly; the remaining
+worktree was clean. GYM-690 is complete. This receipt is pushed and remotely
+verified before Phase 7 changes. Production deployment/publication are untouched.
