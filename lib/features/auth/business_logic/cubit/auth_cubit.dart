@@ -70,6 +70,9 @@ final class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(signingOut: true, failure: null));
     try {
       await authRepository.signOut();
+      if (!isClosed && state.identity == null && state.signingOut) {
+        emit(state.copyWith(signingOut: false));
+      }
     } catch (error) {
       if (!isClosed) {
         emit(state.copyWith(signingOut: false, failure: _failure(error)));

@@ -16,6 +16,7 @@ import '../features/members/presentation/views/member_details_view.dart';
 import '../features/subscriptions/presentation/views/subscription_route_view.dart';
 import '../features/dropins/presentation/views/dropins_view.dart';
 import '../features/statistics/presentation/views/statistics_view.dart';
+import '../features/settings/presentation/views/settings_view.dart';
 import '../l10n/app_localizations.dart';
 import 'app_destination.dart';
 import 'app_routes.dart';
@@ -94,9 +95,7 @@ GoRouter createAppRouter({
                         AppDestination.members => const MembersView(),
                         AppDestination.dropins => const DropinsView(),
                         AppDestination.statistics => const StatisticsView(),
-                        AppDestination.settings => FoundationDestinationView(
-                          destination: destination,
-                        ),
+                        AppDestination.settings => const SettingsView(),
                       },
                 routes: destination == AppDestination.members
                     ? [

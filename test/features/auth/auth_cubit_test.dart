@@ -22,6 +22,26 @@ Future<void> waitFor(AuthCubit cubit, bool Function() condition) async {
 
 void main() {
   test(
+    'sign-out is idempotent while already signed out and clears its busy state',
+    () async {
+      final source = FakeAuthRepository();
+      final cubit = AuthCubit(
+        authRepository: source,
+        createGymRepository: (_) => throw StateError('No tenant expected'),
+        initialSettings: settings('جيمك'),
+      );
+      await waitFor(cubit, () => !cubit.state.initializing);
+      final first = cubit.signOut();
+      await cubit.signOut();
+      await first;
+      expect(source.signOuts, 1);
+      expect(cubit.state.identity, isNull);
+      expect(cubit.state.signingOut, isFalse);
+      await cubit.close();
+      await source.close();
+    },
+  );
+  test(
     'double sign-in is guarded immediately and cancellation is not an error',
     () async {
       final auth = FakeAuthRepository();

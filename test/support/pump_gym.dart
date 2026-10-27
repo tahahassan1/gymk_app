@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gymk_app/app/app.dart';
@@ -13,6 +14,10 @@ import 'package:gymk_app/features/members/presentation/views/member_details_view
 import 'package:gymk_app/features/subscriptions/business_logic/policies/subscription_policy.dart';
 import 'package:gymk_app/features/dropins/presentation/views/dropins_view.dart';
 import 'package:gymk_app/features/statistics/presentation/views/statistics_view.dart';
+import 'package:gymk_app/features/settings/presentation/views/settings_view.dart';
+import 'package:gymk_app/features/auth/business_logic/cubit/auth_cubit.dart';
+
+import 'fake_auth_repository.dart';
 
 import 'fake_clock.dart';
 import 'gym_fixture.dart';
@@ -25,6 +30,7 @@ Future<void> pumpGym(
   double width = 390,
   double height = 840,
   double scale = 1,
+  FakeAuthRepository? authentication,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = Size(width, height);
@@ -32,6 +38,12 @@ Future<void> pumpGym(
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+  final source = authentication ?? FakeAuthRepository();
+  final auth = AuthCubit(
+    authRepository: source,
+    createGymRepository: (_) => fixture.repository,
+    initialSettings: fixture.defaults,
+  );
   final router = GoRouter(
     initialLocation: '/members',
     routes: [
@@ -76,6 +88,7 @@ Future<void> pumpGym(
                   builder: (_, _) => switch (path) {
                     '/dropins' => const DropinsView(),
                     '/statistics' => const StatisticsView(),
+                    '/settings' => const SettingsView(),
                     _ => const SizedBox.shrink(),
                   },
                 ),
@@ -85,11 +98,18 @@ Future<void> pumpGym(
       ),
     ],
   );
-  await tester.pumpWidget(GymkApp(router: router));
+  await tester.pumpWidget(
+    BlocProvider<AuthCubit>.value(
+      value: auth,
+      child: GymkApp(router: router),
+    ),
+  );
   await tester.pumpAndSettle();
   addTearDown(() async {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
+    await auth.close();
+    await source.close();
     await fixture.close();
   });
 }

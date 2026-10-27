@@ -2,6 +2,12 @@ import '../errors/app_failure.dart';
 
 abstract final class FailureCopy {
   static String message(AppFailure failure) {
+    if (failure.code == 'default-price') {
+      return 'اكتب سعر بالجنيه من غير كسور، صفر أو أكتر.';
+    }
+    if (failure.code == 'stale-settings') {
+      return 'الإعدادات اتغيرت. راجع آخر إعدادات قبل الحفظ أو الغِ المسودة لتحميلها.';
+    }
     if (failure.code == 'amount') {
       return 'اكتب مبلغ موجب بالجنيه من غير كسور.';
     }

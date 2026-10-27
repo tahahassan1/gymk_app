@@ -382,7 +382,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-701 — Deliver gym/default-price editing
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 159 tests, clean format/analysis and native offline settings plus A-B-A pending create/delete queue/isolation verification; see [Phase 7 evidence](verification/PHASE_7.md).
 - **Depends on:** GYM-203, GYM-304, GYM-402, GYM-403; D01, D05, D08.
 - **Scope/components:** settings Cubit/view/layouts, reusable settings form.
 - **Acceptance:** gym name, default subscription price and default drop-in price, with clear save behavior. Changes affect future prefills, never historical payments or an already edited draft. Mobile scrolling form and bounded tablet composition share one state. UI-V applies to initial/incomplete/error data, dirty draft, local save/pending/rejection and keyboard/resize preservation. No currency picker, threshold control, cache tools, or theme settings are added.
@@ -390,7 +391,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-702 — Deliver sign-out with pending-change handling
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 159 tests, clean format/analysis and native offline settings plus A-B-A pending create/delete queue/isolation verification; see [Phase 7 evidence](verification/PHASE_7.md).
 - **Depends on:** GYM-304, GYM-403, GYM-701.
 - **Scope/components:** auth/session lifecycle and settings sign-out presentation.
 - **Acceptance:** known pending changes trigger clear warning and offer to stay signed in. Explicit continuation tears down tenant memory/routes/listeners without erasing SDK persistence or claiming upload success. Any wait-for-sync option is cancellable and never blocks indefinitely offline. UI-V applies to mobile/tablet dialogs, pending/error states and resize without repeated sign-out.
