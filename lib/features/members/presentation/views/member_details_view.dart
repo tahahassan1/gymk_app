@@ -12,7 +12,8 @@ import '../../../../core/ui/date_resume_observer.dart';
 import '../../../../core/ui/read_notice.dart';
 import '../../business_logic/cubit/member_details_cubit.dart';
 import '../../business_logic/cubit/member_details_state.dart';
-import '../../business_logic/cubit/members_cubit.dart';
+import '../../../../core/time/clock.dart';
+import '../../../subscriptions/business_logic/policies/subscription_policy.dart';
 import '../../../subscriptions/presentation/widgets/subscription_form.dart';
 import '../layouts/member_details_mobile_layout.dart';
 import '../layouts/member_details_tablet_layout.dart';
@@ -28,7 +29,7 @@ class MemberDetailsView extends StatelessWidget {
     key: ValueKey(memberId),
     create: (_) => MemberDetailsCubit(
       repository: context.read<GymRepository>(),
-      policy: context.read<MembersCubit>().policy,
+      policy: SubscriptionPolicy(clock: context.read<Clock>()),
       memberId: memberId,
     ),
     child: Builder(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/ui/app_feedback.dart';
 import '../core/ui/app_loading_state.dart';
+import '../core/time/clock.dart';
 import '../features/auth/business_logic/cubit/auth_cubit.dart';
 import '../features/auth/business_logic/cubit/mutation_feedback_cubit.dart';
 import '../features/auth/presentation/views/session_loading_view.dart';
@@ -13,6 +14,8 @@ import '../features/members/business_logic/cubit/members_cubit.dart';
 import '../features/members/presentation/views/members_view.dart';
 import '../features/members/presentation/views/member_details_view.dart';
 import '../features/subscriptions/presentation/views/subscription_route_view.dart';
+import '../features/dropins/presentation/views/dropins_view.dart';
+import '../features/statistics/presentation/views/statistics_view.dart';
 import '../l10n/app_localizations.dart';
 import 'app_destination.dart';
 import 'app_routes.dart';
@@ -28,6 +31,7 @@ GoRouter createAppRouter({
   Listenable? authRefresh,
   MembersCubit Function(GymRepository)? createMembers,
   MutationFeedbackCubit Function(GymRepository)? createFeedback,
+  Clock clock = const SystemClock(),
 }) => GoRouter(
   initialLocation: initialLocation,
   refreshListenable: authRefresh,
@@ -69,6 +73,7 @@ GoRouter createAppRouter({
         return TenantSessionScope(
           key: ValueKey('${repository.uid}/${session.sessionEpoch}'),
           repository: repository,
+          clock: clock,
           createMembers: createMembers!,
           createFeedback: createFeedback!,
           child: AppShell(
@@ -83,10 +88,16 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(
                 path: destination.path,
-                builder: (context, state) =>
-                    auth != null && destination == AppDestination.members
-                    ? const MembersView()
-                    : FoundationDestinationView(destination: destination),
+                builder: (context, state) => auth == null
+                    ? FoundationDestinationView(destination: destination)
+                    : switch (destination) {
+                        AppDestination.members => const MembersView(),
+                        AppDestination.dropins => const DropinsView(),
+                        AppDestination.statistics => const StatisticsView(),
+                        AppDestination.settings => FoundationDestinationView(
+                          destination: destination,
+                        ),
+                      },
                 routes: destination == AppDestination.members
                     ? [
                         GoRoute(

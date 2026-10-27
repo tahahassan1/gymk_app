@@ -335,7 +335,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-601 — Deliver drop-in quick entry and day browsing
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 145 passing tests, clean format/analysis and native drop-in/report CRUD, rollback and cascade verification; see [Phase 6 evidence](verification/PHASE_6.md).
 - **Depends on:** GYM-203, GYM-304, GYM-403; D01, D05.
 - **Scope/components:** drop-in form/day-list Cubits, view/mobile/tablet layouts and widgets.
 - **Acceptance:** optional name, settings-prefilled amount, one quick record action, today's list and previous-day browsing. Blank names display `بدون اسم`; records are independent of members. Mobile stacks form/list; tablet can compose bounded entry beside results. UI-V applies; selected day/scroll/draft persist and confirmed empty is distinguished from incomplete cached results. Recording from a historical-day view must follow an explicit date context; do not silently backdate a new quick entry.
@@ -343,7 +344,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-602 — Deliver drop-in editing and permanent deletion
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 145 passing tests, clean format/analysis and native drop-in/report CRUD, rollback and cascade verification; see [Phase 6 evidence](verification/PHASE_6.md).
 - **Depends on:** GYM-601.
 - **Scope/components:** drop-in edit form/dialog, Cubit mutations and repository integration.
 - **Acceptance:** edit name/amount/session date; retain ID; delete only after confirmation. Date edits move the entry between day/month projections; pending deletion/rejection remains observable after the row disappears. UI-V applies to mobile/tablet shared forms, destructive dialogs, selected-day/draft continuity and rollback.
@@ -351,7 +353,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-603 — Deliver local monthly reports
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 145 passing tests, clean format/analysis and native drop-in/report CRUD, rollback and cascade verification; see [Phase 6 evidence](verification/PHASE_6.md).
 - **Depends on:** GYM-104, GYM-201, GYM-302, GYM-303; D01 for currency display, D02 for persisted payment-date integration.
 - **Scope/components:** statistics pure calculator, month Cubit, view/mobile/tablet layouts.
 - **Acceptance:** month picker; subscription income/count, drop-in income/count, and `إجمالي المتحصلات`. Counts are records, not unique members; integer sums use payment/session dates and start-inclusive/end-exclusive month bounds. Recompute from the shared projection when records change; live CRUD/cascade integration is the separate GYM-604 gate. Mobile stacks summaries; tablet arranges the same summaries in available space. UI-V applies, especially selected-month continuity, pending totals, incomplete data labels and authoritative zero only for verified empty input. No charts/profit/export or server counters.
@@ -359,7 +362,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-604 — Verify live report updates from correction/deletion flows
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 145 passing tests, clean format/analysis and native drop-in/report CRUD, rollback and cascade verification; see [Phase 6 evidence](verification/PHASE_6.md).
 - **Depends on:** GYM-603, GYM-503, GYM-504, GYM-505, GYM-602.
 - **Scope/components:** report integration tests and existing shared projections.
 - **Acceptance:** subscription/drop-in create, edit, delete and member cascade update visible totals/counts for affected months, including pending/rejected writes. No second report data source or UI expansion. UI checks target changed totals and selected-month continuity only.

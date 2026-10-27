@@ -8,6 +8,7 @@ import '../features/auth/business_logic/cubit/auth_cubit.dart';
 import '../features/auth/business_logic/cubit/auth_state.dart';
 import '../features/auth/business_logic/cubit/mutation_feedback_cubit.dart';
 import '../features/members/business_logic/cubit/members_cubit.dart';
+import '../core/time/clock.dart';
 import 'app.dart';
 import 'app_routes.dart';
 import 'auth_router_refresh.dart';
@@ -20,10 +21,12 @@ class AppRuntime extends StatefulWidget {
     required this.auth,
     required this.createMembers,
     required this.createFeedback,
+    this.clock = const SystemClock(),
   });
   final AuthCubit auth;
   final MembersCubit Function(GymRepository) createMembers;
   final MutationFeedbackCubit Function(GymRepository) createFeedback;
+  final Clock clock;
 
   @override
   State<AppRuntime> createState() => _AppRuntimeState();
@@ -45,6 +48,7 @@ class _AppRuntimeState extends State<AppRuntime> {
       authRefresh: _refresh,
       createMembers: widget.createMembers,
       createFeedback: widget.createFeedback,
+      clock: widget.clock,
     );
   }
 

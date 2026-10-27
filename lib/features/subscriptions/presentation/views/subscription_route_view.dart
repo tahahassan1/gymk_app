@@ -7,7 +7,8 @@ import '../../../../core/ui/app_loading_state.dart';
 import '../../../../core/ui/read_notice.dart';
 import '../../../members/business_logic/cubit/member_details_cubit.dart';
 import '../../../members/business_logic/cubit/member_details_state.dart';
-import '../../../members/business_logic/cubit/members_cubit.dart';
+import '../../../../core/time/clock.dart';
+import '../../business_logic/policies/subscription_policy.dart';
 import '../../business_logic/cubit/subscription_form_cubit.dart';
 import '../widgets/subscription_form.dart';
 
@@ -20,7 +21,7 @@ class SubscriptionRouteView extends StatelessWidget {
     key: ValueKey(memberId),
     create: (_) => MemberDetailsCubit(
       repository: context.read<GymRepository>(),
-      policy: context.read<MembersCubit>().policy,
+      policy: SubscriptionPolicy(clock: context.read<Clock>()),
       memberId: memberId,
     ),
     child: BlocBuilder<MemberDetailsCubit, MemberDetailsState>(

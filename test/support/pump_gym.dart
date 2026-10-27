@@ -11,6 +11,8 @@ import 'package:gymk_app/features/members/business_logic/cubit/members_cubit.dar
 import 'package:gymk_app/features/members/presentation/views/members_view.dart';
 import 'package:gymk_app/features/members/presentation/views/member_details_view.dart';
 import 'package:gymk_app/features/subscriptions/business_logic/policies/subscription_policy.dart';
+import 'package:gymk_app/features/dropins/presentation/views/dropins_view.dart';
+import 'package:gymk_app/features/statistics/presentation/views/statistics_view.dart';
 
 import 'fake_clock.dart';
 import 'gym_fixture.dart';
@@ -36,6 +38,7 @@ Future<void> pumpGym(
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => TenantSessionScope(
           repository: fixture.repository,
+          clock: FakeClock(DateOnly(2026, 11, 10)),
           createMembers: (repo) => MembersCubit(
             repository: repo,
             policy: SubscriptionPolicy(
@@ -68,7 +71,14 @@ Future<void> pumpGym(
           for (final path in ['/dropins', '/statistics', '/settings'])
             StatefulShellBranch(
               routes: [
-                GoRoute(path: path, builder: (_, _) => const SizedBox.shrink()),
+                GoRoute(
+                  path: path,
+                  builder: (_, _) => switch (path) {
+                    '/dropins' => const DropinsView(),
+                    '/statistics' => const StatisticsView(),
+                    _ => const SizedBox.shrink(),
+                  },
+                ),
               ],
             ),
         ],

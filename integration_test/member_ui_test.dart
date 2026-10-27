@@ -51,6 +51,7 @@ void main() {
       await tester.pumpWidget(
         AppRuntime(
           auth: auth,
+          clock: FakeClock(DateOnly(2026, 11, 10)),
           createMembers: (repo) => MembersCubit(
             repository: repo,
             policy: SubscriptionPolicy(

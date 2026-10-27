@@ -6,6 +6,23 @@ import '../time/date_only.dart';
 
 /// Presentation-only formatting. Persisted date encoding is a separate contract.
 abstract final class AppFormatters {
+  static String month(DateOnly value) =>
+      '\u2068${(DateFormat.yMMMM('ar_EG')..useNativeDigits = false).format(DateTime(value.year, value.month))}\u2069';
+
+  static String totalMoney(BigInt value) {
+    final formatter = NumberFormat.currency(
+      locale: 'ar_EG',
+      name: GymkCurrency.code,
+      decimalDigits: 0,
+    );
+    final digits = value.toString();
+    final grouped = digits.replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (_) => formatter.symbols.GROUP_SEP,
+    );
+    return '\u2068$grouped ${formatter.currencySymbol}\u2069';
+  }
+
   static String day(DateOnly value) =>
       '\u2068${date(DateTime(value.year, value.month, value.day))}\u2069';
   static String date(DateTime date) =>

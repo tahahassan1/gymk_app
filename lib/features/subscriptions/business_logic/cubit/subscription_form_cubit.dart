@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/session/data/repositories/gym_repository.dart';
@@ -39,12 +37,6 @@ final class SubscriptionFormCubit extends Cubit<SubscriptionFormState> {
          ),
        ) {
     if (original != null) _setEditPreview();
-    // Keep the shared projection alive even when opened as a direct route.
-    _history = repository.watchSubscriptions().listen(
-      (_) {},
-      onError: (Object _) {},
-    );
-    _members = repository.watchMembers().listen((_) {}, onError: (Object _) {});
   }
   final GymRepository repository;
   final SubscriptionPolicy policy;
@@ -52,8 +44,6 @@ final class SubscriptionFormCubit extends Cubit<SubscriptionFormState> {
   final SubscriptionRecord? original;
   final String id;
   final String operationId;
-  late final StreamSubscription<Object?> _history;
-  late final StreamSubscription<Object?> _members;
   SubscriptionRecord? _intent;
   MutationHandle? _handle;
   bool get _editable =>
@@ -252,12 +242,5 @@ final class SubscriptionFormCubit extends Cubit<SubscriptionFormState> {
     } on AppFailure catch (failure) {
       _fail(failure);
     }
-  }
-
-  @override
-  Future<void> close() async {
-    await _history.cancel();
-    await _members.cancel();
-    return super.close();
   }
 }

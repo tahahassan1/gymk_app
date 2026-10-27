@@ -2,6 +2,18 @@ import '../errors/app_failure.dart';
 
 abstract final class FailureCopy {
   static String message(AppFailure failure) {
+    if (failure.code == 'amount') {
+      return 'اكتب مبلغ موجب بالجنيه من غير كسور.';
+    }
+    if (failure.code == 'name') {
+      return 'اكتب الاسم الأول.';
+    }
+    if (failure.code == 'future-start') {
+      return 'اختار بداية الاشتراك النهارده أو قبل كده.';
+    }
+    if (failure.code == 'stale-edit') {
+      return 'السجل اتعدل بعد ما فتحته. اقفل النموذج وافتحه تاني لمراجعة أحدث بيانات.';
+    }
     if (failure.code == 'local-confirmation') {
       return 'ماقدرناش نتأكد من تطبيق التغيير على الجهاز. التغيير ممكن يكون لسه في الانتظار.';
     }
