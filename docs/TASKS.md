@@ -2,10 +2,10 @@
 
 Planning baseline: 27 October 2026. Platform: Android. UI: Egyptian Arabic, RTL.
 
-This checklist tracks verified implementation. Phases 1–3 and 5–7 are delivered;
-Phase 4 implementation is delivered. The latest user request authorizes all remaining
-phases (5–8), with the existing verified
-commit/push checkpoints. Deployment and store publication remain separate.
+This checklist tracks verified implementation. All tasks through Phase 8 are
+verified and delivered, including the owner's real Google-account confirmation.
+The phase records preserve implementation and commit/push evidence. Deployment
+and store publication remain separately authorized actions.
 
 ## Sources and working rules
 
@@ -438,8 +438,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-890 — Verify, commit and push Phase 8
 
-- [ ] Verified complete
-- **Status:** implementation and final checks are complete; reviewed commit/push/remote-SHA/worktree checkpoint is next. No production deployment or publication is included.
+- [x] Verified complete
+- **Status:** implementation `28338055205b97a0f157b937a1043dc8e4374318` was reviewed, committed and pushed normally to origin/main. The remote SHA matched local HEAD exactly and the worktree was clean. This follow-up receipt is pushed and checked by the same protocol. No production deployment or publication is included.
 - **Depends on:** GYM-801, GYM-802, GYM-803.
 - **Scope/components:** Phase 8 fixes/artifacts and final verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after the complete release-readiness regression gate. Publishing/deployment still requires separate authorization.
@@ -449,5 +449,5 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 - **Implemented:** all functionality through Phase 8 is implemented. All four gym destinations work, including editing/permanent deletion, renewals, reports, settings and safe sign-out. The owner's real Google-account confirmation closes the Phase 4 verification gate.
 - **Verification:** 187 Flutter tests, clean format/analysis, six rules groups, five native regressions, actual airplane/process restart, native OS window/keyboard matrix and signed debug/release artifact build/install checks pass. See [Phase 8 evidence](verification/PHASE_8.md).
-- **Delivery:** Phases 5-7 are delivered with verified remote SHAs above. Phase 8 is ready for its normal commit/push and final remote-SHA/worktree checkpoint; GYM-890 remains unchecked until that succeeds.
-- **Active scope:** finish the Phase 8 delivery checkpoint. No remaining product/runtime prerequisite is known within the authorized scope. Temporary verification AVD file removal was blocked by automatic review; the AVD is stopped and its files are retained. No production deployment or publication is authorized.
+- **Delivery:** all phase checkpoints through Phase 8 are complete. Phase 8 implementation `28338055205b97a0f157b937a1043dc8e4374318` was pushed normally; its remote SHA matched and the worktree was clean. This documentation receipt follows the same push/audit protocol.
+- **Remaining scope/blockers:** no implementation or verification task remains through Phase 8. Temporary verification AVD file removal was blocked by automatic review (`blocked by policy`); the AVD is stopped and its files are retained. This is a cleanup limitation, not an application gate. No production deployment or publication is authorized.
