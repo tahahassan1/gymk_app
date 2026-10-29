@@ -12,13 +12,7 @@ final class MemberMutationGate {
     }
     try {
       final handle = operation();
-      handle.localResult.then((failure) {
-        if (failure != null && handle.pending) {
-          handle.remoteResult.then((_) => _busy.remove(memberId));
-        } else {
-          _busy.remove(memberId);
-        }
-      });
+      handle.localSettlement.then((_) => _busy.remove(memberId));
       return handle;
     } catch (_) {
       _busy.remove(memberId);

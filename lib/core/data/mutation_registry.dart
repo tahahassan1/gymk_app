@@ -46,10 +46,20 @@ final class MutationHandle {
   AppFailure? get failure => _failure;
   final _local = Completer<AppFailure?>();
   final _remote = Completer<AppFailure?>();
+  final _localSettlement = Completer<void>();
 
   /// Null means this specific operation was observed locally, or acknowledged.
   /// A failure of local observation does not mean the cloud rejected the write.
-  Future<AppFailure?> get localResult => _local.future;
+  Future<AppFailure?> get localResult => switch (stage) {
+    MutationStage.locallyApplied ||
+    MutationStage.acknowledged => Future.value(null),
+    MutationStage.rejected => Future.value(failure),
+    MutationStage.submitted => _local.future,
+  };
+
+  /// Unlike an uncertain read result, settles only on actual local application,
+  /// a remote outcome or session end. Used for conflicting-mutation locks.
+  Future<void> get localSettlement => _localSettlement.future;
   Future<AppFailure?> get remoteResult => _remote.future;
   bool get pending =>
       stage == MutationStage.submitted || stage == MutationStage.locallyApplied;
@@ -98,6 +108,9 @@ final class MutationRegistry {
       (matches) {
         if (_closed || !matches || !handle.pending) return;
         handle._stage = MutationStage.locallyApplied;
+        if (!handle._localSettlement.isCompleted) {
+          handle._localSettlement.complete();
+        }
         if (!handle._local.isCompleted) handle._local.complete(null);
         _notify();
       },
@@ -120,6 +133,9 @@ final class MutationRegistry {
         if (_closed) return;
         handle._stage = MutationStage.acknowledged;
         handle._failure = null;
+        if (!handle._localSettlement.isCompleted) {
+          handle._localSettlement.complete();
+        }
         if (!handle._local.isCompleted) handle._local.complete(null);
         handle._remote.complete(null);
         _stopObserving(id);
@@ -130,6 +146,9 @@ final class MutationRegistry {
         final failure = mapFailure(error);
         handle._stage = MutationStage.rejected;
         handle._failure = failure;
+        if (!handle._localSettlement.isCompleted) {
+          handle._localSettlement.complete();
+        }
         if (!handle._local.isCompleted) handle._local.complete(failure);
         handle._remote.complete(failure);
         _stopObserving(id);
@@ -162,6 +181,9 @@ final class MutationRegistry {
         FailureKind.unauthenticated,
         code: 'session-ended',
       );
+      if (!handle._localSettlement.isCompleted) {
+        handle._localSettlement.complete();
+      }
       if (!handle._local.isCompleted) handle._local.complete(ended);
       if (!handle._remote.isCompleted) handle._remote.complete(ended);
     }

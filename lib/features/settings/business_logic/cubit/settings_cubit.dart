@@ -19,7 +19,8 @@ final class SettingsCubit extends Cubit<SettingsState> {
       (_) {
         final handle = _handle;
         if (handle?.stage == MutationStage.rejected &&
-            state.submission.applied &&
+            (state.submission.applied ||
+                state.submission.failure?.code == 'local-confirmation') &&
             _intent != null) {
           _baseline = _beforeIntent;
           _publish(
@@ -68,9 +69,12 @@ final class SettingsCubit extends Cubit<SettingsState> {
   GymSettings? _baseline, _intent, _beforeIntent;
   AppFailure? _readFailure;
   MutationHandle? _handle;
+  bool get _hasSubmittedIntent =>
+      _handle != null && _handle!.stage != MutationStage.rejected;
   bool get _editable =>
       !state.submission.busy &&
-      (state.submission.applied || !(_handle?.pending ?? false));
+      (state.submission.applied || !_hasSubmittedIntent);
+  bool get canEdit => state.ready && _editable;
   bool get hasKnownPendingChanges =>
       repository.mutations.any((m) => m.pending) ||
       (repository.currentMembers?.hasPendingWrites ?? false) ||
@@ -163,7 +167,7 @@ final class SettingsCubit extends Cubit<SettingsState> {
     }
     _publish(submission: const SubmissionState(busy: true));
     try {
-      if (!(_handle?.pending ?? false)) {
+      if (!_hasSubmittedIntent) {
         final latest = repository.currentSettings?.data;
         if (latest == null || _baseline == null) {
           throw const AppFailure(FailureKind.incompleteData);
@@ -189,7 +193,9 @@ final class SettingsCubit extends Cubit<SettingsState> {
           dropinPrice: dropin.minorUnits,
         );
       }
-      _handle = repository.saveSettings(_intent!, operationId: operationId);
+      if (!_hasSubmittedIntent) {
+        _handle = repository.saveSettings(_intent!, operationId: operationId);
+      }
       final failure = await _handle!.localResult;
       if (isClosed) return;
       if (failure == null) {
@@ -211,8 +217,9 @@ final class SettingsCubit extends Cubit<SettingsState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     await _settings.cancel();
     await _mutations.cancel();
-    return super.close();
+    return stateClosed;
   }
 }

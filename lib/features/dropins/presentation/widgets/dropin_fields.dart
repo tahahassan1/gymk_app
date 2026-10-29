@@ -19,12 +19,14 @@ class DropinFields extends StatelessWidget {
     required this.onAmount,
     required this.onSave,
     this.onDate,
+    this.readOnly = false,
   });
   final DropinFormState state;
   final TextEditingController name, amount;
   final ValueChanged<String> onName, onAmount;
   final ValueChanged<DateOnly>? onDate;
   final VoidCallback onSave;
+  final bool readOnly;
   @override
   Widget build(BuildContext context) => Column(
     mainAxisSize: MainAxisSize.min,
@@ -43,6 +45,7 @@ class DropinFields extends StatelessWidget {
         label: 'الاسم (اختياري)',
         controller: name,
         onChanged: onName,
+        readOnly: readOnly,
       ),
       const SizedBox(height: 16),
       AppTextField(
@@ -51,13 +54,14 @@ class DropinFields extends StatelessWidget {
         textDirection: TextDirection.ltr,
         keyboardType: TextInputType.number,
         onChanged: onAmount,
+        readOnly: readOnly,
       ),
       if (onDate != null)
         AppDateField(
           label: 'يوم الحصة',
           value: state.date,
           lastDate: DateOnly(9999, 12, 31),
-          onChanged: state.submission.busy ? null : onDate,
+          onChanged: readOnly ? null : onDate,
         ),
       if (state.staleDate)
         const Padding(

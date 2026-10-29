@@ -19,17 +19,24 @@ class SettingsFields extends StatelessWidget {
     required this.onSave,
     required this.onReload,
     required this.onRetry,
+    this.readOnly = false,
   });
   final SettingsState state;
   final TextEditingController name, subscriptionPrice, dropinPrice;
   final ValueChanged<String> onName, onSubscription, onDropin;
   final VoidCallback onSave, onReload, onRetry;
+  final bool readOnly;
   @override
   Widget build(BuildContext context) => Column(
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      AppTextField(label: 'اسم الجيم', controller: name, onChanged: onName),
+      AppTextField(
+        label: 'اسم الجيم',
+        controller: name,
+        onChanged: onName,
+        readOnly: readOnly,
+      ),
       const SizedBox(height: 16),
       AppTextField(
         label: 'سعر الاشتراك الافتراضي بالجنيه',
@@ -37,6 +44,7 @@ class SettingsFields extends StatelessWidget {
         textDirection: TextDirection.ltr,
         keyboardType: TextInputType.number,
         onChanged: onSubscription,
+        readOnly: readOnly,
       ),
       const SizedBox(height: 16),
       AppTextField(
@@ -45,6 +53,7 @@ class SettingsFields extends StatelessWidget {
         textDirection: TextDirection.ltr,
         keyboardType: TextInputType.number,
         onChanged: onDropin,
+        readOnly: readOnly,
       ),
       const SizedBox(height: 12),
       const Text(

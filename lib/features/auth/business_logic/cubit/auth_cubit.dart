@@ -155,10 +155,11 @@ final class AuthCubit extends Cubit<AuthState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     _generation++;
     await _identitySubscription.cancel();
     await _ownedRepository?.close();
     _ownedRepository = null;
-    return super.close();
+    return stateClosed;
   }
 }

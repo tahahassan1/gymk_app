@@ -64,6 +64,7 @@ class _DropinEditFormState extends State<DropinEditForm> {
             onAmount: cubit.amountChanged,
             onDate: cubit.dateChanged,
             onSave: cubit.submit,
+            readOnly: !cubit.canEdit,
           );
         },
       );

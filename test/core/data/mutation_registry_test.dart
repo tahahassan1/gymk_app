@@ -33,6 +33,34 @@ void main() {
     await registry.close();
     await local.close();
   });
+  test('uncertain observation recovers locally without holding the member until cloud acknowledgement', () async {
+    final gate = MemberMutationGate();
+    final handle = gate.run('member', submit);
+    local.addError(StateError('temporary read error'));
+    expect((await handle.localResult)?.code, 'local-confirmation');
+    expect(
+      () => gate.run('member', () => submit(id: 'next')),
+      throwsA(isA<AppFailure>()),
+    );
+    local.add(true);
+    await Future<void>.delayed(Duration.zero);
+    expect(await handle.localResult, isNull);
+    final next = gate.run('member', () => submit(id: 'next'));
+    expect(next.id, 'next');
+    expect(writes, 2);
+    cloud.complete();
+    await next.remoteResult;
+  });
+  test('retry reads the eventual acknowledgement after uncertain local observation', () async {
+    final handle = submit();
+    local.addError(StateError('temporary read error'));
+    expect((await handle.localResult)?.code, 'local-confirmation');
+    cloud.complete();
+    await handle.remoteResult;
+    expect(await handle.localResult, isNull);
+    expect(submit(), same(handle));
+    expect(writes, 1);
+  });
 
   test(
     'local application releases offline forms before cloud acknowledgement',

@@ -106,6 +106,32 @@ void main() {
     expect(cubit.operationId, id);
     expect(cubit.state.submission.applied, isTrue);
   });
+  test('uncertain local observation freezes the intent and later rejection restores the draft', () async {
+    cubit.nameChanged('مسودة تنتظر نتيجة الكتابة');
+    fixture.delayLocal = true;
+    fixture.remote = Completer<void>();
+    final submit = cubit.submit();
+    fixture.settingsSource.addError(const AppFailure(FailureKind.unavailable));
+    await submit;
+    expect(cubit.state.submission.failure?.code, 'local-confirmation');
+    expect(cubit.canEdit, isFalse);
+    final operation = cubit.operationId;
+    cubit.nameChanged('لا يتغير قبل معرفة نتيجة المحاولة');
+    expect(cubit.state.name, 'مسودة تنتظر نتيجة الكتابة');
+    await cubit.submit();
+    expect(fixture.writes, 1);
+    fixture.remote!.completeError(const AppFailure(FailureKind.permission));
+    await Future<void>.delayed(Duration.zero);
+    expect(cubit.state.submission.failure?.kind, FailureKind.permission);
+    expect(cubit.canEdit, isTrue);
+    expect(cubit.state.dirty, isTrue);
+    fixture.delayLocal = false;
+    fixture.remote = null;
+    fixture.publish();
+    await cubit.submit();
+    expect(cubit.operationId, operation);
+    expect(cubit.state.submission.applied, isTrue);
+  });
   test(
     'settings affect new prefills and preserve already edited payment drafts',
     () async {

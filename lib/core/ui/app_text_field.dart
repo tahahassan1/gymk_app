@@ -10,6 +10,7 @@ class AppTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.autofocus = false,
+    this.readOnly = false,
   });
 
   final String label;
@@ -19,6 +20,7 @@ class AppTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onChanged;
   final bool autofocus;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) => TextFormField(
@@ -28,6 +30,7 @@ class AppTextField extends StatelessWidget {
     validator: validator,
     onChanged: onChanged,
     autofocus: autofocus,
+    readOnly: readOnly,
     decoration: InputDecoration(labelText: label),
   );
 }

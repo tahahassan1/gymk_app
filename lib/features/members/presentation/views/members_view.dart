@@ -25,6 +25,7 @@ class MembersView extends StatefulWidget {
 }
 
 class _MembersViewState extends State<MembersView> {
+  final _controlsKey = GlobalKey();
   final _search = TextEditingController();
   @override
   void dispose() {
@@ -41,6 +42,7 @@ class _MembersViewState extends State<MembersView> {
       child: BlocBuilder<MembersCubit, MembersState>(
         builder: (context, state) {
           final controls = MembersControls(
+            key: _controlsKey,
             state: state,
             search: _search,
             onSearch: cubit.searchChanged,

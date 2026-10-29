@@ -85,10 +85,13 @@ final class DropinFormCubit extends Cubit<DropinFormState> {
   bool _dirty = false;
   Dropin? _intent;
   MutationHandle? _handle;
+  bool get _hasSubmittedIntent =>
+      _handle != null && _handle!.stage != MutationStage.rejected;
   bool get _editable =>
       !state.submission.busy &&
       !state.submission.applied &&
-      !(_handle?.pending ?? false);
+      !_hasSubmittedIntent;
+  bool get canEdit => _editable;
   void nameChanged(String value) {
     if (!_editable) return;
     _dirty = true;
@@ -167,7 +170,7 @@ final class DropinFormCubit extends Cubit<DropinFormState> {
   Future<void> submit() async {
     if (state.submission.busy || state.submission.applied) return;
     if (original == null &&
-        !(_handle?.pending ?? false) &&
+        !_hasSubmittedIntent &&
         state.date != clock.today()) {
       refreshDate();
       return;
@@ -181,7 +184,7 @@ final class DropinFormCubit extends Cubit<DropinFormState> {
       ),
     );
     try {
-      if (!(_handle?.pending ?? false)) {
+      if (!_hasSubmittedIntent) {
         final parsed = AmountPolicy.parse(
           state.amount,
           purpose: AmountPurpose.paymentRecord,
@@ -207,7 +210,9 @@ final class DropinFormCubit extends Cubit<DropinFormState> {
           date: original == null ? clock.today() : state.date,
         );
       }
-      _handle = repository.saveDropin(_intent!, operationId: operationId);
+      if (!_hasSubmittedIntent) {
+        _handle = repository.saveDropin(_intent!, operationId: operationId);
+      }
       final failure = await _handle!.localResult;
       if (!isClosed) {
         _publish(
@@ -229,7 +234,8 @@ final class DropinFormCubit extends Cubit<DropinFormState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     await _settings.cancel();
-    return super.close();
+    return stateClosed;
   }
 }

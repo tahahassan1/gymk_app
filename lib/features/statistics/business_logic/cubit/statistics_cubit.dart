@@ -113,9 +113,10 @@ final class StatisticsCubit extends Cubit<StatisticsState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     await _subscriptions.cancel();
     await _dropins.cancel();
     await _mutations.cancel();
-    return super.close();
+    return stateClosed;
   }
 }

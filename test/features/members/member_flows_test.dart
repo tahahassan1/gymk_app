@@ -39,6 +39,29 @@ void main() {
     policy = SubscriptionPolicy(clock: clock);
   });
   tearDown(() => fixture.close());
+  test('uncertain payment retry after acknowledgement preserves the original recording date and ID', () async {
+    final form = SubscriptionFormCubit(
+      repository: fixture.repository,
+      policy: policy,
+      memberId: 'one',
+    );
+    fixture.delayLocal = true;
+    fixture.remote = Completer<void>();
+    final submitted = form.submit();
+    fixture.historySource.addError(const AppFailure(FailureKind.unavailable));
+    await submitted;
+    expect(form.state.submission.failure?.code, 'local-confirmation');
+    clock.date = DateOnly(2026, 11, 11);
+    fixture.remote!.complete();
+    fixture.applyLocal();
+    await Future<void>.delayed(Duration.zero);
+    await form.submit();
+    expect(form.state.submission.applied, isTrue);
+    expect(fixture.writes, 1);
+    expect(fixture.history.single.id, form.id);
+    expect(fixture.history.single.paidAt, DateOnly(2026, 11, 10));
+    await form.close();
+  });
   test('required trimmed name, optional string phone, duplicate submission and local completion', () async {
     final form = MemberFormCubit(fixture.repository);
     await form.submit();
@@ -76,6 +99,7 @@ void main() {
     fixture.remote = null;
     fixture.delayLocal = false;
     await form.submit();
+    expect(form.state.submission.failure, isNull);
     expect(form.result!.id, id);
     expect(form.result!.createdAt, DateTime(2026, 10, 28));
     expect(fixture.memberRecords.where((m) => m.id == id).length, 1);

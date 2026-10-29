@@ -170,7 +170,7 @@ void main() {
         router.routeInformationProvider.value.uri.path,
         '/members/account-a-private',
       );
-      await tester.tap(find.text('التفاصيل'));
+      await tester.tap(find.byTooltip('التفاصيل'));
       await tester.pumpAndSettle();
       expect(find.textContaining('عضو خاص بالحساب أ'), findsOneWidget);
 

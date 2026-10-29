@@ -12,9 +12,9 @@ import 'fake_gym_repository.dart';
 
 /// Real repository/mutation machinery with a deterministic typed SDK boundary.
 class GymFixture implements GymDataProvider {
-  GymFixture() {
+  GymFixture({bool publishInitial = true}) {
     repository = FirestoreGymRepository(this);
-    publish();
+    if (publishInitial) publish();
   }
   late final FirestoreGymRepository repository;
   final memberSource = StreamController<ReadSnapshot<List<Member>>>.broadcast(

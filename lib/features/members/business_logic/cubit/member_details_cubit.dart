@@ -122,9 +122,10 @@ final class MemberDetailsCubit extends Cubit<MemberDetailsState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     _timer.cancel();
     await _members.cancel();
     await _history.cancel();
-    return super.close();
+    return stateClosed;
   }
 }

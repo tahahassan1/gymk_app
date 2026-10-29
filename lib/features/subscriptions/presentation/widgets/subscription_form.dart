@@ -57,67 +57,69 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) => BlocConsumer<SubscriptionFormCubit, SubscriptionFormState>(
-    listenWhen: (a, b) => !a.submission.applied && b.submission.applied,
-    listener: (context, _) => Navigator.of(context).pop(),
-    builder: (context, state) {
-      final cubit = context.read<SubscriptionFormCubit>();
-      final preview = state.preview;
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            widget.member.name,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
-          AppTextField(
-            label: 'المبلغ بالجنيه',
-            controller: _amount,
-            keyboardType: TextInputType.number,
-            textDirection: TextDirection.ltr,
-            onChanged: cubit.amountChanged,
-          ),
-          const SizedBox(height: 16),
-          AppDateField(
-            label: 'بداية الاشتراك',
-            value: preview.period.start,
-            lastDate: cubit.policy.clock.today(),
-            onChanged: state.submission.busy ? null : cubit.startChanged,
-          ),
-          if (cubit.original == null)
-            TextButton(
-              onPressed: state.submission.busy ? null : cubit.automaticStart,
-              child: const Text('استخدم البداية التلقائية'),
-            ),
-          Text('نهاية الشهر: ${AppFormatters.day(preview.period.end)}'),
-          if (preview.currentExpiry case final expiry?)
-            Text('الانتهاء الحالي: ${AppFormatters.day(expiry)}'),
-          if (preview.resultingCurrentExpiry case final expiry?)
-            Text('الانتهاء بعد الحفظ: ${AppFormatters.day(expiry)}'),
-          const SizedBox(height: 8),
-          const Text('شهر تقويمي واحد. تاريخ التحصيل هو يوم تسجيل الدفع.'),
-          if (!(cubit.repository.currentSubscriptions?.isComplete ?? false))
-            const Text('التغطية محسوبة من السجل المتاح وقد تكون غير كاملة.'),
-          if (state.stale)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                'التغطية أو اليوم اتغيروا. راجع التواريخ الجديدة واضغط حفظ للتأكيد.',
+  Widget build(BuildContext context) =>
+      BlocConsumer<SubscriptionFormCubit, SubscriptionFormState>(
+        listenWhen: (a, b) => !a.submission.applied && b.submission.applied,
+        listener: (context, _) => Navigator.of(context).pop(),
+        builder: (context, state) {
+          final cubit = context.read<SubscriptionFormCubit>();
+          final preview = state.preview;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                widget.member.name,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-            ),
-          SubmissionFeedback(state: state.submission),
-          const SizedBox(height: 16),
-          AppButton(
-            label: state.stale ? 'تأكيد وحفظ' : 'حفظ الاشتراك',
-            busy: state.submission.busy,
-            onPressed: cubit.submit,
-          ),
-        ],
+              const SizedBox(height: 16),
+              AppTextField(
+                label: 'المبلغ بالجنيه',
+                controller: _amount,
+                keyboardType: TextInputType.number,
+                textDirection: TextDirection.ltr,
+                onChanged: cubit.amountChanged,
+                readOnly: !cubit.canEdit,
+              ),
+              const SizedBox(height: 16),
+              AppDateField(
+                label: 'بداية الاشتراك',
+                value: preview.period.start,
+                lastDate: cubit.policy.clock.today(),
+                onChanged: cubit.canEdit ? cubit.startChanged : null,
+              ),
+              if (cubit.original == null)
+                TextButton(
+                  onPressed: cubit.canEdit ? cubit.automaticStart : null,
+                  child: const Text('استخدم البداية التلقائية'),
+                ),
+              Text('نهاية الشهر: ${AppFormatters.day(preview.period.end)}'),
+              if (preview.currentExpiry case final expiry?)
+                Text('الانتهاء الحالي: ${AppFormatters.day(expiry)}'),
+              if (preview.resultingCurrentExpiry case final expiry?)
+                Text('الانتهاء بعد الحفظ: ${AppFormatters.day(expiry)}'),
+              const SizedBox(height: 8),
+              const Text('شهر تقويمي واحد. تاريخ التحصيل هو يوم تسجيل الدفع.'),
+              if (!(cubit.repository.currentSubscriptions?.isComplete ?? false))
+                const Text(
+                  'التغطية محسوبة من السجل المتاح وقد تكون غير كاملة.',
+                ),
+              if (state.stale)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'التغطية أو اليوم اتغيروا. راجع التواريخ الجديدة واضغط حفظ للتأكيد.',
+                  ),
+                ),
+              SubmissionFeedback(state: state.submission),
+              const SizedBox(height: 16),
+              AppButton(
+                label: state.stale ? 'تأكيد وحفظ' : 'حفظ الاشتراك',
+                busy: state.submission.busy,
+                onPressed: cubit.submit,
+              ),
+            ],
+          );
+        },
       );
-    },
-  );
 }

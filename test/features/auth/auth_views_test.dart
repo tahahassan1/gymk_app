@@ -200,7 +200,7 @@ void main() {
         ),
       ]);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('التفاصيل'));
+      await tester.tap(find.byTooltip('التفاصيل'));
       await tester.pumpAndSettle();
       expect(find.textContaining('اسم خاص بالحساب أ'), findsOneWidget);
       auth.change(AuthIdentity('B'));
@@ -269,7 +269,7 @@ void main() {
         ),
       ]);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('التفاصيل'));
+      await tester.tap(find.byTooltip('التفاصيل'));
       await tester.pumpAndSettle();
       expect(find.textContaining('أحمد محمد'), findsOneWidget);
       tester.view.physicalSize = const Size(600, 800);

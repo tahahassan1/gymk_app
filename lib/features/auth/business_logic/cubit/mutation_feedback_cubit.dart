@@ -34,7 +34,8 @@ final class MutationFeedbackCubit extends Cubit<MutationFeedbackState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     await _subscription.cancel();
-    return super.close();
+    return stateClosed;
   }
 }

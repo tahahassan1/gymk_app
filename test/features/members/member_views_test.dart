@@ -6,6 +6,37 @@ import '../../support/gym_fixture.dart';
 import '../../support/pump_gym.dart';
 
 void main() {
+  testWidgets(
+    'hundreds-member list stays lazy and retains scroll across shell layouts',
+    (tester) async {
+      final fixture = GymFixture();
+      fixture.memberRecords = List.generate(
+        400,
+        (i) => Member(
+          id: 'member-$i',
+          name: 'عضو ${i.toString().padLeft(3, '0')}',
+          createdAt: DateTime(2026, 10, 26),
+        ),
+      );
+      fixture.publish();
+      await pumpGym(tester, fixture, width: 599);
+      Finder scroll() => find
+          .descendant(
+            of: find.byType(CustomScrollView).last,
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      tester.state<ScrollableState>(scroll()).position.jumpTo(1800);
+      await tester.pumpAndSettle();
+      for (final width in [600.0, 1024.0, 601.0, 599.0]) {
+        tester.view.physicalSize = Size(width, 840);
+        await tester.pumpAndSettle();
+        expect(tester.state<ScrollableState>(scroll()).position.pixels, 1800);
+        expect(tester.takeException(), isNull);
+      }
+      expect(fixture.writes, 0);
+    },
+  );
   for (final width in [390.0, 600.0, 1024.0]) {
     for (final scale in [1.0, 2.0]) {
       testWidgets('members and details RTL $width at $scale', (tester) async {

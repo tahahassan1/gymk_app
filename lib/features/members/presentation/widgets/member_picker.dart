@@ -77,7 +77,14 @@ class _MemberPickerState extends State<MemberPicker> {
             itemBuilder: (context, index) {
               final member = state.rows[index].member;
               return ListTile(
-                title: Text(member.name),
+                title: Tooltip(
+                  message: member.name,
+                  child: Text(
+                    member.name,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 onTap: () => Navigator.of(context).pop(member),
               );
             },

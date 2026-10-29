@@ -62,6 +62,7 @@ class _MemberFormState extends State<MemberForm> {
                 label: 'اسم العضو',
                 controller: _name,
                 onChanged: cubit.nameChanged,
+                readOnly: !cubit.canEdit,
               ),
               const SizedBox(height: 16),
               AppTextField(
@@ -70,6 +71,7 @@ class _MemberFormState extends State<MemberForm> {
                 textDirection: TextDirection.ltr,
                 keyboardType: TextInputType.phone,
                 onChanged: cubit.phoneChanged,
+                readOnly: !cubit.canEdit,
               ),
               SubmissionFeedback(state: state.submission),
               const SizedBox(height: 16),

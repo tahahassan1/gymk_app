@@ -123,11 +123,12 @@ final class MembersCubit extends Cubit<MembersState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     _dateTimer.cancel();
     await Future.wait([
       _membersSubscription.cancel(),
       _coverageSubscription.cancel(),
     ]);
-    return super.close();
+    return stateClosed;
   }
 }

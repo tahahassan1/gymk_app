@@ -123,3 +123,17 @@ delivery. Work stops here; Phases 5–8 are untouched.
 
 Final debug APK SHA-256:
 `55DC4C41107144C94EBDE6140B333B3C49FD99F629334F527447EB2FF40C65DE`.
+
+## Follow-up closure — 29 October 2026
+
+The earlier outstanding OAuth status above is historical. After the project-local
+Windows Kotlin cache build fix, the owner was explicitly asked whether all three
+real Google-account Android checks succeeded: sign in and reach Members, close
+and reopen with the session retained, then sign out from Settings and return to
+Login. The owner replied **“All three succeeded.”** This is owner-reported manual
+runtime evidence, distinct from the anonymous emulator fixtures and configuration
+inspection. It closes GYM-401 and the remaining GYM-490 runtime gate.
+
+Phases 5–8 were subsequently authorized; their evidence records supersede the old
+stop instruction and scaffolding status in this historical receipt. No production
+rules deployment or store publication is implied by this verification.

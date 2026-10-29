@@ -102,8 +102,9 @@ final class DropinsCubit extends Cubit<DropinsState> {
 
   @override
   Future<void> close() async {
+    final stateClosed = super.close();
     _timer.cancel();
     await _subscription.cancel();
-    return super.close();
+    return stateClosed;
   }
 }

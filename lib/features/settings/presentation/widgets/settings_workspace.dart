@@ -85,6 +85,7 @@ class _SettingsWorkspaceState extends State<SettingsWorkspace> {
             onSave: cubit.submit,
             onReload: cubit.reloadDraft,
             onRetry: cubit.retry,
+            readOnly: !cubit.canEdit,
           );
           final account = BlocBuilder<AuthCubit, AuthState>(
             builder: (context, auth) => SignOutSection(

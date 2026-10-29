@@ -67,11 +67,18 @@ class AppShellFrame extends StatelessWidget {
               key: const ValueKey('branch-host'),
               child: AppLayoutScope(
                 mode: mode,
-                child: Column(
-                  children: [
-                    feedback,
-                    Expanded(child: navigationShell),
-                  ],
+                child: LayoutBuilder(
+                  builder: (context, constraints) => Column(
+                    children: [
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: constraints.maxHeight * .4,
+                        ),
+                        child: SingleChildScrollView(child: feedback),
+                      ),
+                      Expanded(child: navigationShell),
+                    ],
+                  ),
                 ),
               ),
             ),

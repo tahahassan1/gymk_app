@@ -40,9 +40,12 @@ class SessionMutationBanner extends StatelessWidget {
                   rejected
                       ? 'في تغييرات اترفضت وتحتاج مراجعة'
                       : 'تغييرات في انتظار التأكيد (${state.pending.length})',
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              TextButton(
+              IconButton(
+                tooltip: 'التفاصيل',
                 onPressed: () => showDialog<void>(
                   context: context,
                   builder: (_) => BlocProvider.value(
@@ -50,7 +53,7 @@ class SessionMutationBanner extends StatelessWidget {
                     child: const MutationDetailsDialog(),
                   ),
                 ),
-                child: const Text('التفاصيل'),
+                icon: const Icon(Icons.info_outline),
               ),
             ],
           ),

@@ -26,10 +26,13 @@ final class MemberFormCubit extends Cubit<MemberFormState> {
   Member? result;
   Member? _intent;
   MutationHandle? _handle;
+  bool get _hasSubmittedIntent =>
+      _handle != null && _handle!.stage != MutationStage.rejected;
   bool get _editable =>
       !state.submission.busy &&
       !state.submission.applied &&
-      !(_handle?.pending ?? false);
+      !_hasSubmittedIntent;
+  bool get canEdit => _editable;
   void nameChanged(String value) {
     if (_editable) emit(MemberFormState(name: value, phone: state.phone));
   }
@@ -48,7 +51,7 @@ final class MemberFormCubit extends Cubit<MemberFormState> {
       ),
     );
     try {
-      if (!(_handle?.pending ?? false)) {
+      if (!_hasSubmittedIntent) {
         if (original != null &&
             !(repository.currentMembers?.data.any((m) => m.id == id) ??
                 false)) {
@@ -69,7 +72,9 @@ final class MemberFormCubit extends Cubit<MemberFormState> {
           createdAt: original?.createdAt ?? _intent?.createdAt ?? _now(),
         );
       }
-      _handle = repository.saveMember(_intent!, operationId: operationId);
+      if (!_hasSubmittedIntent) {
+        _handle = repository.saveMember(_intent!, operationId: operationId);
+      }
       final failure = await _handle!.localResult;
       if (isClosed) return;
       if (failure == null) result = _intent;

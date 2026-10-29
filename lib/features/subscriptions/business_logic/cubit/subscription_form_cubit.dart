@@ -46,10 +46,13 @@ final class SubscriptionFormCubit extends Cubit<SubscriptionFormState> {
   final String operationId;
   SubscriptionRecord? _intent;
   MutationHandle? _handle;
+  bool get _hasSubmittedIntent =>
+      _handle != null && _handle!.stage != MutationStage.rejected;
   bool get _editable =>
       !state.submission.busy &&
       !state.submission.applied &&
-      !(_handle?.pending ?? false);
+      !_hasSubmittedIntent;
+  bool get canEdit => _editable;
   static Iterable<CoveragePeriod> _periods(
     GymRepository repository,
     String memberId,
@@ -153,7 +156,7 @@ final class SubscriptionFormCubit extends Cubit<SubscriptionFormState> {
       ),
     );
     try {
-      if (!(_handle?.pending ?? false)) {
+      if (!_hasSubmittedIntent) {
         if (!(repository.currentMembers?.data.any((m) => m.id == memberId) ??
             false)) {
           throw const AppFailure(FailureKind.notFound);
@@ -224,7 +227,12 @@ final class SubscriptionFormCubit extends Cubit<SubscriptionFormState> {
               paidAt: preview.asOf,
             );
       }
-      _handle = repository.saveSubscription(_intent!, operationId: operationId);
+      if (!_hasSubmittedIntent) {
+        _handle = repository.saveSubscription(
+          _intent!,
+          operationId: operationId,
+        );
+      }
       final failure = await _handle!.localResult;
       if (!isClosed) {
         emit(

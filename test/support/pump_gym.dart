@@ -31,6 +31,7 @@ Future<void> pumpGym(
   double height = 840,
   double scale = 1,
   FakeAuthRepository? authentication,
+  bool settle = true,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = Size(width, height);
@@ -104,7 +105,11 @@ Future<void> pumpGym(
       child: GymkApp(router: router),
     ),
   );
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
   addTearDown(() async {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();

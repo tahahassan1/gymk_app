@@ -2,8 +2,8 @@
 
 Planning baseline: 27 October 2026. Platform: Android. UI: Egyptian Arabic, RTL.
 
-This checklist tracks verified implementation. Phases 1–3 are delivered; Phase 4
-implementation is delivered. The latest user request authorizes all remaining
+This checklist tracks verified implementation. Phases 1–3 and 5–7 are delivered;
+Phase 4 implementation is delivered. The latest user request authorizes all remaining
 phases (5–8), with the existing verified
 commit/push checkpoints. Deployment and store publication remain separate.
 
@@ -57,10 +57,10 @@ are marked complete. Independent work can proceed.
 | D04 | Resolved by user, 27 October 2026: compact persistent pending/error feedback in the shared shell. | Track observed session mutations and rejected actions; never infer global sync/connectivity. |
 | D05 | Resolved by user, 27 October 2026: allow zero default prices; subscription/drop-in payment records must be positive. Negative/invalid amounts are rejected. | Applied in GYM-203 with explicit amount purpose. GYM-305 rules and later forms must use the same distinction. |
 | D06 | Resolved by user, 27 October 2026: three days fixed for MVP; no settings control. | Keep the centralized policy threshold. |
-| D07 | Resolved boundary, 27 October 2026: guarded complete-history single-batch member deletion; block incomplete/oversized history. Larger cascades and cross-device coordination are outside MVP. | GYM-505 still verifies actual SDK/backend limits and documents the implemented guard; never silently split batches. |
+| D07 | Resolved boundary, 27 October 2026: guarded complete-history single-batch member deletion; block incomplete/oversized history. Larger cascades and cross-device coordination are outside MVP. | GYM-505 verified the supported boundary: at most 200 subscriptions plus the member in one 201-delete batch. See PHASE_5.md; never silently split batches. |
 | D08 | Resolved by user, 27 October 2026: both initial prices are zero; any temporary name is acceptable (`جيمك` selected). | Create only on server-confirmed absence; preserve existing settings. Owners edit these values through settings. |
 | D09 | Asset prerequisite, satisfied in Phase 1: Cairo 400/600/700 and SIL license are bundled from Google Fonts. DESIGN_STYLE's older future-icon wording yields to AGENTS.md and the existing square logo. | GYM-102/105 reuse `assets/images/logo.png` and `assets/lotties/loading.json`; no new artwork or transparency conversion. This resolves an asset prerequisite, not a product choice. |
-| D10 | Production ID `dev.tahahassan.gymk` is configured with its new Firebase Android registration and registered debug/upload SHA-1s. Private local signing inputs were created and Gradle verified both fingerprints. | Configuration/signing coordination is complete. The user will perform real Google sign-in; no successful OAuth result is recorded yet. Final release-artifact verification remains Phase 8. See verification/PHASE_4.md. |
+| D10 | Production ID `dev.tahahassan.gymk` is configured with its new Firebase Android registration and registered debug/upload SHA-1s. The existing private signing inputs are preserved. | On 29 October 2026 the owner explicitly confirmed real Google login to Members, retained session after close/reopen, and sign-out returning to Login: “All three succeeded.” See PHASE_4.md. Final artifact verification is recorded in PHASE_8.md. |
 
 Documentation conflicts to reconcile: PRD's blanket offline promise must retain the confirmed limits for first download, unverified cache, and safe cascades. DESIGN_STYLE's phone-focused guidance and bottom tabs extend to two layouts with the same four destinations; AGENTS.md/ARCHITECTURE require mobile/tablet compositions now. No new product decision is needed for those confirmed constraints.
 
@@ -241,8 +241,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-401 — Implement Google sign-in and restore sessions
 
-- [ ] Verified complete
-- **Evidence/status:** implemented; auth fake tests and adaptive RTL login checks pass, and native Firebase session restoration passes. Package/configuration and both registered SHA-1s agree. The user will test real Google sign-in; this runtime gate remains unverified. See [Phase 4 evidence](verification/PHASE_4.md).
+- [x] Verified complete
+- **Evidence/status:** auth fake tests, adaptive RTL login and native Firebase session checks pass. Package/configuration and both registered SHA-1s agree. On 29 October 2026 the owner confirmed all three real Google checks succeeded: entry into Members, session retained after close/reopen, and sign-out returning to Login. See [Phase 4 evidence](verification/PHASE_4.md).
 - **Depends on:** GYM-102, GYM-301; setup prerequisite D10.
 - **Scope/components:** auth data/provider/repository, `business_logic/cubit/`, sign-in view/mobile/tablet layouts, Android permissions/configuration.
 - **Acceptance:** compatible Google sign-in/Firebase Auth APIs, a single Google action, cancellation/retry/first-use internet feedback, restored authenticated session offline. Mobile uses a readable stacked surface; tablet uses bounded content with the same action/state. Preserve supplied branding. Add main-manifest network permission for release functionality. UI-V applies; sign-in progress/error survives resize without duplicate requests.
@@ -251,7 +251,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 ### GYM-402 — Bootstrap first-account settings safely
 
 - [x] Verified complete
-- **Evidence:** fake tests cover existing/absent settings, repeat identities, permission recovery and unverified cache absence. The isolated Android native scenario verifies bootstrap, retained custom prices on repeated login and offline restoration. See [Phase 4 evidence](verification/PHASE_4.md). GYM-401's real Google consent check remains separately open.
+- **Evidence:** fake tests cover existing/absent settings, repeat identities, permission recovery and unverified cache absence. The isolated Android native scenario verifies bootstrap, retained custom prices on repeated login and offline restoration. See [Phase 4 evidence](verification/PHASE_4.md); the owner has since confirmed GYM-401's real Google check.
 - **Depends on:** GYM-302, GYM-304, GYM-305, GYM-401; D01, D05, D08.
 - **Scope/components:** settings repository/provider, authenticated bootstrap state and loading/recovery UI.
 - **Acceptance:** create the settings map only after server-confirmed absence, with resolved initial values. Never replace existing prices/name on login or mistake an empty offline cache for a missing user. Initial online setup is separate from ordinary restored offline use. UI-V applies to setup/loading/retry/incomplete states.
@@ -268,8 +268,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-490 — Verify, commit and push Phase 4
 
-- [ ] Verified complete
-- **Status:** implementation `d59e592` was committed, pushed normally and verified against the remote SHA with a clean worktree. The fully verified checkpoint remains open until the user's real Google sign-in result closes GYM-401. See [Phase 4 evidence](verification/PHASE_4.md); no configuration-only OAuth claim is made.
+- [x] Verified complete
+- **Status:** implementation `d59e592` and receipt `57c5a98` were pushed normally, with matching remote SHA and clean worktree. The owner's explicit 29 October real Google login/session/sign-out success closes the remaining runtime gate. The Phase 8 delivery records this follow-up evidence. See [Phase 4 evidence](verification/PHASE_4.md).
 - **Depends on:** GYM-401, GYM-402, GYM-403.
 - **Scope/components:** Phase 4 files and verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after auth/session and relevant UI checks.
@@ -411,7 +411,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-801 — Verify persistence, rejection recovery, and tenant isolation end to end
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** actual Android airplane mode, offline CRUD/early renewal/cascade, force-stop/restart with local services down, restored SDK pending metadata, exact 215 EGP cash, server reconciliation without duplicates and late rejection rollback pass. Earlier native A-B-A settings/sign-out evidence and lifetime regressions cover tenant isolation. See [Phase 8 evidence](verification/PHASE_8.md).
 - **Depends on:** GYM-305, GYM-505, GYM-604, GYM-702.
 - **Scope/components:** `integration_test/`, emulator fixtures/rules tests, Android verification record.
 - **Acceptance:** online preload→airplane-mode read/add/edit/renew/delete→process restart→reconnect yields correct local and server records/totals. Fresh install and unverified empty cache remain honest; rejected queued writes roll back with affected-action feedback after forms close. A/B account isolation and listener cleanup hold. No duplicate stable intents or custom durable queue.
@@ -419,7 +420,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-802 — Verify both layouts, continuity, and accessibility across the app
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** full 20-combination screen/form/dialog matrix at widths 320–1280 and 1×/2× text; 599/600/601 continuity, short keyboard-open landscape, reduced motion and representative accessibility checks pass. Native Android OS size/rotation/font/keyboard and narrow-to-wide split-pane continuity pass with screenshot inspection; 400-member list remains lazy. See [Phase 8 evidence](verification/PHASE_8.md).
 - **Depends on:** GYM-104, GYM-105, GYM-501, GYM-502, GYM-503, GYM-504, GYM-505, GYM-601, GYM-602, GYM-603, GYM-701, GYM-702.
 - **Scope/components:** cross-feature widget tests and Android phone/tablet-window verification.
 - **Acceptance:** execute UI-V for every delivered screen/form/dialog, including 599/600/601 transitions during search, member selection, day/month changes, typing, and pending writes. Same features/actions in both modes; no clipped Arabic, inaccessible targets, repeated effects or state/listener resets. Confirm calm list styling and supplied loading/icon artwork in actual rendering.
@@ -427,7 +429,8 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ### GYM-803 — Close release decisions and verify the Android artifact
 
-- [ ] Verified complete
+- [x] Verified complete
+- **Evidence:** 187 Flutter tests, clean format/analysis, six rules groups, five native regressions, actual airplane/process restart and native window matrix pass. Debug/release APKs build, install and cold-launch; signatures, Firebase mapping, manifest, Arabic label and bundled artwork/fonts verify. The owner confirmed real Google login/session/sign-out success. README records supported boundaries and mode-specific tooling refresh. See [Phase 8 evidence](verification/PHASE_8.md).
 - **Depends on:** GYM-801, GYM-802; unresolved D01–D08 and D10 closed or explicitly documented as an accepted supported boundary.
 - **Scope/components:** production Android identity/signing, existing Firebase mappings, README/setup instructions and verification evidence.
 - **Acceptance:** production identity/signing and Google registration agree; release network permission, launcher resources and Arabic label are correct. Firebase rules/index configuration matches actual repository queries. Record supported single-device/offline/batch limitations, resolved product choices, setup commands and outstanding external prerequisites. No task is complete solely because files exist; no privileged credentials are committed. Local readiness does not authorize deployment or store publication.
@@ -436,6 +439,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 ### GYM-890 — Verify, commit and push Phase 8
 
 - [ ] Verified complete
+- **Status:** implementation and final checks are complete; reviewed commit/push/remote-SHA/worktree checkpoint is next. No production deployment or publication is included.
 - **Depends on:** GYM-801, GYM-802, GYM-803.
 - **Scope/components:** Phase 8 fixes/artifacts and final verification record.
 - **Acceptance:** follow the phase commit-and-push protocol after the complete release-readiness regression gate. Publishing/deployment still requires separate authorization.
@@ -443,7 +447,7 @@ belongs to Phase 3 and remains unresolved; no codec or Firebase work is included
 
 ## Current handoff
 
-- **Implemented:** Phases 1-3 and 5-7 are verified and delivered. Phase 4 implementation is delivered; actual Google OAuth verification remains open. All four gym destinations now have working data flows.
-- **Verification:** Phase 7 has 159 passing Flutter tests, clean formatting/analysis and native offline settings plus A-B-A pending create/delete queue/isolation evidence. See [Phase 7 evidence](verification/PHASE_7.md). Full process restart, OS viewport/rotation/accessibility and release artifacts remain Phase 8.
-- **Delivery:** Prior verified receipts remain above. Phase 7 implementation `cf11d03cbedfd3b3c2500052df210b2b49689ed2` was pushed, remote SHA matched and the worktree was clean. This receipt follows the same protocol.
-- **Active scope:** complete ALL remaining tasks through Phase 8. Continue automatically. GYM-401/GYM-490 await the user's actual Google OAuth result; independent work continues. No production deployment or publication is authorized.
+- **Implemented:** all functionality through Phase 8 is implemented. All four gym destinations work, including editing/permanent deletion, renewals, reports, settings and safe sign-out. The owner's real Google-account confirmation closes the Phase 4 verification gate.
+- **Verification:** 187 Flutter tests, clean format/analysis, six rules groups, five native regressions, actual airplane/process restart, native OS window/keyboard matrix and signed debug/release artifact build/install checks pass. See [Phase 8 evidence](verification/PHASE_8.md).
+- **Delivery:** Phases 5-7 are delivered with verified remote SHAs above. Phase 8 is ready for its normal commit/push and final remote-SHA/worktree checkpoint; GYM-890 remains unchecked until that succeeds.
+- **Active scope:** finish the Phase 8 delivery checkpoint. No remaining product/runtime prerequisite is known within the authorized scope. Temporary verification AVD file removal was blocked by automatic review; the AVD is stopped and its files are retained. No production deployment or publication is authorized.

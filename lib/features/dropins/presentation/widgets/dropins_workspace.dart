@@ -71,6 +71,7 @@ class _DropinsWorkspaceState extends State<DropinsWorkspace> {
                 onName: form.nameChanged,
                 onAmount: form.amountChanged,
                 onSave: form.submit,
+                readOnly: !form.canEdit,
               ),
             );
             final controls = DropinDayControls(
